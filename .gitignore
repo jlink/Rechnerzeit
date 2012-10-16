@@ -1,0 +1,6 @@
+target
+out
+*.log
+*.iws
+*.tmp
+*.DS_Store

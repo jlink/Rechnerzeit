@@ -1,0 +1,22 @@
+html, textarea {
+    font-family: 'Monaco','Menlo','Ubuntu Mono','Droid Sans Mono','Consolas',monospace;
+}
+
+#editor {
+    position: relative;
+    width: 95%;
+    margin: 0.2em;
+    height: 200px;
+    font-size: 18px;
+    border: 1px solid #000000;
+}
+
+#output {
+    position: relative;
+    width: 95%;
+    margin: 0.2em;
+    height: 200px;
+    font-size: 18px;
+    border: 1px solid #000000;
+    resize: none;
+}
