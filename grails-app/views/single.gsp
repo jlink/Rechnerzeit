@@ -17,7 +17,7 @@
 
 <section class="output-box">
     <div id="editor">// Ein kleines Programm
-var name = 'Elias', geboren = 2001;
+var name = 'Jannek', geboren = 2001;
 var jahr = new Date().getYear() + 1900;
 var alter = jahr - geboren;
 drucke('Hallo, ' + name + '. ');
