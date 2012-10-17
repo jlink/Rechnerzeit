@@ -36,6 +36,10 @@ h1 {
     resize: vertical;
 }
 
+#output.running {
+    background-color: #fff15d;
+}
+
 .exception #output {
     background-color: #ff9185;
 }

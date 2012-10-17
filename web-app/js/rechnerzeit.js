@@ -1,4 +1,7 @@
 define(['jquery'], function($) {
+        var editor = null;
+        var pendingChange = null;
+
         function loescheAusgabe(text) {
             $('#output').val('');
         }
@@ -13,16 +16,22 @@ define(['jquery'], function($) {
             $('#output').val(old + text + '\n');
         }
 
-        function evaluateCodeInEditor(editor) {
+        function evaluateCodeInEditor() {
             try {
                 $('.output-box').removeClass("exception");
                 loescheAusgabe();
+                $('#output').addClass("running");
                 var result = eval(editor.getValue());
                 if (result !== undefined)
                     druckeInZeile('\n>> ' + dumpObject(result))
             } catch (ex) {
                 $('.output-box').addClass("exception");
                 $('#exception-display').val(ex.message);
+            } finally {
+//                $('#output').animate({'background-color': '#d3d3d3'});
+                setTimeout(function() {
+                    $('#output').removeClass("running");
+                }, 500);
             }
         }
 
@@ -34,19 +43,23 @@ define(['jquery'], function($) {
             return JSON.stringify(obj)
         }
 
+        function onEditorChange() {
+            clearTimeout(pendingChange);
+            pendingChange = setTimeout(function() {
+                evaluateCodeInEditor();
+            }, 1000)
+        }
+
         return {
             init: function() {
-                var editor = ace.edit("editor");
+                editor = ace.edit("editor");
                 editor.setTheme("ace/theme/eclipse");
                 editor.getSession().setMode("ace/mode/javascript");
                 editor.setShowPrintMargin(false);
-
-                editor.getSession().on('change', function(e) {
-                    evaluateCodeInEditor(editor);
-                });
-
-                editor.setValue("drucke('Hallo!');");
-                editor.gotoLine(1);
+                editor.setValue("drucke('Hallo!');\n");
+                evaluateCodeInEditor();
+                editor.getSession().on('change', onEditorChange);
+                editor.gotoLine(2);
                 $('#editor textarea').focus();
             }
         }

@@ -13,7 +13,7 @@
 </head>
 <body>
 
-<header><h1>Lerne zu Programmieren</h1></header>
+<header><h1>Lerne zu programmieren</h1></header>
 
 <section class="output-box">
     <div id="editor"></div>
