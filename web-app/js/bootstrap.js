@@ -7,6 +7,7 @@ require.config({
         underscore: 'lib/underscore',
         backbone: 'lib/backbone',
 //        ace: 'lib/ace/ace',
+        domReady: 'lib/domReady',
         rechnerzeit: 'rechnerzeit'
     },
     shim: {
@@ -17,8 +18,11 @@ require.config({
     }
 });
 
-require([ 'jquery', 'backbone', 'router', 'rechnerzeit'], function($, Backbone, Router, Rechnerzeit){
+require([ 'jquery', 'backbone', 'router', 'rechnerzeit', 'domReady'], function($, Backbone, Router, Rechnerzeit, domReady){
 
     App.router = new Router();
-    Rechnerzeit.init();
+    domReady(function() {
+        Rechnerzeit.init();
+    });
+
 });

@@ -8,6 +8,11 @@ body, html {
     border: 0;
 }
 
+h1 {
+    margin: 0.5em;
+    padding: 0;
+}
+
 #editor {
     position: relative;
     width: 100%;
@@ -23,7 +28,7 @@ body, html {
 #output {
     position: relative;
     padding: 0.2em;
-    width: 100%;
+    width: 99%;
     height: 200px;
     font-size: 16px;
     border: 1px solid #a0a0a0;
@@ -31,11 +36,33 @@ body, html {
     resize: vertical;
 }
 
+.exception #output {
+    background-color: #ff9185;
+}
+
+#exception-display {
+    visibility: hidden;
+    position: relative;
+    padding: 0.2em;
+    width: 99%;
+    height: 50px;
+    font-size: 12px;
+    border: 1px solid #a0a0a0;
+    background-color: #ff9185;
+    resize: vertical;
+}
+
+.exception #exception-display {
+    visibility: visible;
+}
+
 section.controls {
     margin-top: 2em;
 }
 
 .control {
+    line-height: 3em;
+    white-space: nowrap;
     vertical-align: middle;
     background-color: #d3d3d3;
     padding: 5px;
@@ -46,14 +73,26 @@ section.controls {
     cursor: pointer;
 }
 
+.control:hover {
+    -moz-box-shadow:    3px 3px 5px 6px #ccc;
+    -webkit-box-shadow: 3px 3px 5px 6px #ccc;
+    box-shadow:         3px 3px 5px 6px #ccc;
+}
+
 .control img {
     margin-right: 0.3em;
 }
 
 .control.disabled {
-    font-style: italic;
+    /*font-style: italic;*/
     color: #a9a9a9;
     cursor: auto;
+}
+
+.control.disabled:hover {
+    -moz-box-shadow:    none;
+    -webkit-box-shadow: none;
+    box-shadow:         none;
 }
 
 footer {
