@@ -16,7 +16,14 @@
 <header><h1>Lerne zu programmieren</h1></header>
 
 <section class="output-box">
-    <div id="editor"></div>
+    <div id="editor">// Ein kleines Programm
+var name = 'Elias', geboren = 2001;
+var jahr = new Date().getYear() + 1900;
+var alter = jahr - geboren;
+drucke('Hallo, ' + name + '. ');
+druckeInZeile('Wir befinden uns im Jahre ' + jahr + '.');
+druckeInZeile('Du bist ' + alter + ' Jahre alt.');
+    </div>
 </section>
 
 <section class="controls">

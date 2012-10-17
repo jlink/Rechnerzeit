@@ -62,9 +62,9 @@ define(['jquery'], function($) {
             editor.setTheme("ace/theme/eclipse");
             editor.getSession().setMode("ace/mode/javascript");
             editor.setShowPrintMargin(false);
-            editor.setValue('');
-            appendLine("// Ein kleines Programm:");
-            appendLine("drucke('Hallo!');");
+//            editor.setValue('');
+//            appendLine("// Ein kleines Programm:");
+//            appendLine("drucke('Hallo!');");
             gotoEnd();
             evaluateCodeInEditor();
             editor.getSession().on('change', onEditorChange);
