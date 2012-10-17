@@ -20,7 +20,7 @@
 </section>
 
 <section class="controls">
-    <span id="single-execution" class="control disabled"><g:img dir="images/silk-icons" file="control_play.png"/>Programm einmal ausführen</span>
+    <span id="single-execution" class="control"><g:img dir="images/silk-icons" file="control_play.png"/>Programm ausführen</span>
     <span id="continuous-execution" class="control disabled"><g:img dir="images/silk-icons" file="control_repeat.png"/>Programm ständig ausführen</span>
     <span id="stop-execution" class="control"><g:img dir="images/silk-icons" file="control_stop.png"/>Ständige Ausführung stoppen</span>
 </section>

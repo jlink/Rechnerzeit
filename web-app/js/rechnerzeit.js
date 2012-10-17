@@ -50,17 +50,62 @@ define(['jquery'], function($) {
             }, 1000)
         }
 
-        return {
-            init: function() {
-                editor = ace.edit("editor");
-                editor.setTheme("ace/theme/eclipse");
-                editor.getSession().setMode("ace/mode/javascript");
-                editor.setShowPrintMargin(false);
-                editor.setValue("drucke('Hallo!');\n");
+        function initEditor() {
+            function gotoEnd() {
+                editor.gotoLine(editor.session.getLength());
+            }
+            function appendLine(line) {
+                gotoEnd();
+                editor.insert(line + "\n");
+            }
+            editor = ace.edit("editor");
+            editor.setTheme("ace/theme/eclipse");
+            editor.getSession().setMode("ace/mode/javascript");
+            editor.setShowPrintMargin(false);
+            editor.setValue('');
+            appendLine("// Ein kleines Programm:");
+            appendLine("drucke('Hallo!');");
+            gotoEnd();
+            evaluateCodeInEditor();
+            editor.getSession().on('change', onEditorChange);
+            editor.commands.addCommand({
+                name: 'ausfuehren',
+                bindKey: {win: 'Ctrl-Y',  mac: 'Command-Y'},
+                exec: function(editor) {
+                    evaluateCodeInEditor();
+                }
+            });
+            gotoEnd();
+            $('#editor textarea').focus();
+        }
+
+        function wireControls() {
+            function onStopExecution() {
+                $('#stop-execution').unbind('click', onStopExecution);
+                $('#stop-execution').addClass("disabled");
+                $('#continuous-execution').click(onContinuousExecution);
+                $('#continuous-execution').removeClass("disabled");
+                editor.getSession().removeListener('change', onEditorChange);
+            }
+            function onContinuousExecution() {
+                $('#continuous-execution').unbind('click', onContinuousExecution);
+                $('#continuous-execution').addClass("disabled");
+                $('#stop-execution').click(onStopExecution);
+                $('#stop-execution').removeClass("disabled");
                 evaluateCodeInEditor();
                 editor.getSession().on('change', onEditorChange);
-                editor.gotoLine(2);
-                $('#editor textarea').focus();
+            }
+            function onSingleExecution() {
+                evaluateCodeInEditor();
+            }
+            $('#single-execution').click(onSingleExecution);
+            $('#stop-execution').click(onStopExecution);
+        }
+
+        return {
+            init: function() {
+                initEditor();
+                wireControls();
             }
         }
     }
