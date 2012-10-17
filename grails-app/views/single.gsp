@@ -13,19 +13,26 @@
 </head>
 <body>
 
-<header><h1>Rechnerzeit: Lerne zu Programmieren</h1></header>
+<header><h1>Lerne zu Programmieren</h1></header>
 
-<section>
+<section class="output-box">
     <div id="editor"></div>
 </section>
 
-<section>
+<section class="controls">
+    <span id="continuous-execution" class="control disabled"><g:img dir="images/silk-icons" file="control_play.png"/>Programm ständig ausführen</span>
+    <span id="stop-execution" class="control"><g:img dir="images/silk-icons" file="control_pause.png"/>Ständige Ausführung stoppen</span>
+    <span id="single-execution" class="control disabled"><g:img dir="images/silk-icons" file="control_pause.png"/>Programm einmal ausführen</span>
+</section>
+
+<section class="output-box">
     <textarea id="output" readonly="readonly"></textarea>
 </section>
 
 <footer>
     <g:link uri="wasistdas">Was ist Rechnerzeit?</g:link>
     <g:link uri="impressum">Impressum</g:link>
+    <g:link uri="credits">Credits</g:link>
 </footer>
 
 </body>

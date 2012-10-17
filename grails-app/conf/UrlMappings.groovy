@@ -10,6 +10,7 @@ class UrlMappings {
 		"/**"(view:"/single")
         "/impressum"(view:"/impressum")
         "/wasistdas"(view:"/wasistdas")
+        "/credits"(view:"/credits")
 		"500"(view:'/error')
 	}
 }
