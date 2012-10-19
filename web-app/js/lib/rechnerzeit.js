@@ -1,6 +1,21 @@
-define(['rechnerzeit-playground', 'jquery', 'jquery.animate-colors-min'], function(playground, $) {
+define(['rechnerzeit-playground', 'backbone', 'jquery', 'jquery.animate-colors-min'], function(playground, Backbone, $) {
+        var rechnerzeit = { }
+
+        var currentUserSession = null;
         var editor = null;
         var pendingChange = null;
+
+        var UserSession = Backbone.Model.extend({
+            defaults: {
+                "program":  "// Ein kleines Programm\n" +
+                    "var name = 'Jannek';\n" +
+                    "var geboren = 2001;\n" +
+                    "var alter = heute().jahr - geboren;\n" +
+                    "drucke('Hallo, ' + name + '. ');\n" +
+                    "druckeInZeile('Heute ist der ' + heute() + '. Es ist jetzt ' + jetzt());\n" +
+                    "druckeInZeile('Du bist ' + alter + ' Jahre alt.');\n"
+            }
+        });
 
         function clearOutput(text) {
             $('#output').val('');
@@ -61,9 +76,7 @@ define(['rechnerzeit-playground', 'jquery', 'jquery.animate-colors-min'], functi
             editor.setTheme("ace/theme/eclipse");
             editor.getSession().setMode("ace/mode/javascript");
             editor.setShowPrintMargin(false);
-//            editor.setValue('');
-//            appendLine("// Ein kleines Programm:");
-//            appendLine("drucke('Hallo!');");
+            editor.setValue(currentUserSession.get('program'));
             gotoEnd();
             evaluateCodeInEditor();
             editor.getSession().on('change', onEditorChange);
@@ -101,11 +114,16 @@ define(['rechnerzeit-playground', 'jquery', 'jquery.animate-colors-min'], functi
             $('#stop-execution').click(onStopExecution);
         }
 
-        return {
-            init: function() {
-                initEditor();
-                wireControls();
-            }
+        function initSession() {
+            currentUserSession = new UserSession({id: App.sessionId});
         }
+
+        rechnerzeit.init = function() {
+            initSession();
+            initEditor();
+            wireControls();
+        };
+
+        return rechnerzeit;
     }
 );

@@ -8,7 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="${resource(dir: 'images', file: 'favicon.ico')}" type="image/x-icon">
     <script src="http://d1n0x3qji82z53.cloudfront.net/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
-    <script type="text/javascript" data-main="js/bootstrap" src="${resource(dir: 'js', file: 'lib/require-jquery.js')}"></script>
+    <script type="text/javascript" data-main="/js/bootstrap" src="${resource(dir: 'js', file: 'lib/require-jquery.js')}"></script>
     <link rel="stylesheet" href="${resource(dir: 'css', file: 'single.css')}" type="text/css">
 </head>
 <body>
@@ -16,14 +16,7 @@
 <header><h1>Lerne zu programmieren</h1></header>
 
 <section class="output-box">
-    <div id="editor">// Ein kleines Programm
-var name = 'Jannek';
-var geboren = 2001;
-var alter = heute().jahr - geboren;
-drucke('Hallo, ' + name + '. ');
-druckeInZeile('Heute ist der ' + heute() + '. Es ist jetzt ' + jetzt());
-druckeInZeile('Du bist ' + alter + ' Jahre alt.');
-    </div>
+    <div id="editor"></div>
 </section>
 
 <section class="controls">

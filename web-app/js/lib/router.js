@@ -1,4 +1,4 @@
-define([ 'jquery', 'underscore', 'backbone' ], function($, _, Backbone){
+define([ 'jquery', 'underscore', 'backbone'], function($, _, Backbone) {
 
     var Router = Backbone.Router.extend({
 
@@ -7,12 +7,15 @@ define([ 'jquery', 'underscore', 'backbone' ], function($, _, Backbone){
         },
 
         routes: {
-            ':catchall' : 'home',
+            ':sessionId' : 'home',
             '' : 'home'
         },
 
-        home: function(){
-//            $("#content").html("Home")
+        home: function(sessionId) {
+            if (sessionId) {
+                App.sessionId = sessionId;
+                this.navigate('', {replace: true})
+            }
         }
     });
 
