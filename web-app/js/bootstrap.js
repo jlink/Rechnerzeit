@@ -12,8 +12,8 @@ require.config({
 
 require([ 'jquery', 'backbone', 'router', 'rechnerzeit', 'domReady'], function($, Backbone, Router, Rechnerzeit, domReady){
 
-    App.router = new Router();
     domReady(function() {
+        App.router = new Router();
         Rechnerzeit.init();
     });
 

@@ -6,6 +6,7 @@ define(['rechnerzeit-playground', 'backbone', 'jquery', 'jquery.animate-colors-m
         var pendingChange = null;
 
         var UserSession = Backbone.Model.extend({
+            urlRoot: '/session',
             defaults: {
                 "program":  "// Ein kleines Programm\n" +
                     "var name = 'Jannek';\n" +
@@ -64,21 +65,15 @@ define(['rechnerzeit-playground', 'backbone', 'jquery', 'jquery.animate-colors-m
             }, 1000)
         }
 
+        function gotoEnd() {
+            editor.gotoLine(editor.session.getLength());
+        }
+
         function initEditor() {
-            function gotoEnd() {
-                editor.gotoLine(editor.session.getLength());
-            }
-            function appendLine(line) {
-                gotoEnd();
-                editor.insert(line + "\n");
-            }
             editor = ace.edit("editor");
             editor.setTheme("ace/theme/eclipse");
             editor.getSession().setMode("ace/mode/javascript");
             editor.setShowPrintMargin(false);
-            editor.setValue(currentUserSession.get('program'));
-            gotoEnd();
-            evaluateCodeInEditor();
             editor.getSession().on('change', onEditorChange);
             editor.commands.addCommand({
                 name: 'ausfuehren',
@@ -87,8 +82,6 @@ define(['rechnerzeit-playground', 'backbone', 'jquery', 'jquery.animate-colors-m
                     evaluateCodeInEditor();
                 }
             });
-            gotoEnd();
-            $('#editor textarea').focus();
         }
 
         function wireControls() {
@@ -114,14 +107,31 @@ define(['rechnerzeit-playground', 'backbone', 'jquery', 'jquery.animate-colors-m
             $('#stop-execution').click(onStopExecution);
         }
 
-        function initSession() {
-            currentUserSession = new UserSession({id: App.sessionId});
+        function initSession(afterwards) {
+            if (localStorage.getItem('sessionId')) {
+                currentUserSession = new UserSession({id: localStorage.getItem('sessionId')});
+                currentUserSession.fetch({
+                        success: function(newSession) {
+                            afterwards();
+                        }, error: function(msg, err) {
+                            alert("error: " + dumpObject(err));
+                        }
+                    }
+                );
+            } else {
+                currentUserSession = new UserSession();
+                afterwards();
+            }
         }
 
         rechnerzeit.init = function() {
-            initSession();
-            initEditor();
             wireControls();
+            initEditor();
+            initSession(function() {
+                editor.setValue(currentUserSession.get('program'));
+                gotoEnd();
+                $('#editor textarea').focus();
+            });
         };
 
         return rechnerzeit;
