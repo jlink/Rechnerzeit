@@ -11,6 +11,7 @@ class UrlMappings {
         "/impressum"(view:"/impressum")
         "/wasistdas"(view:"/wasistdas")
         "/credits"(view:"/credits")
+        "/session/$id"(resource: 'session')
 		"500"(view:'/error')
 	}
 }

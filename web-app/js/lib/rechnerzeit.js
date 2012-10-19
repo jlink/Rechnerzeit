@@ -1,17 +1,12 @@
-define(['jquery'], function($) {
+define(['rechnerzeit-playground', 'jquery', 'jquery.animate-colors-min'], function(playground, $) {
         var editor = null;
         var pendingChange = null;
 
-        function loescheAusgabe(text) {
+        function clearOutput(text) {
             $('#output').val('');
         }
 
-        function drucke(text) {
-            var old = $('#output').val();
-            $('#output').val(old + text);
-        }
-
-        function druckeInZeile(text) {
+        function lineOutput(text) {
             var old = $('#output').val();
             $('#output').val(old + text + '\n');
         }
@@ -19,18 +14,22 @@ define(['jquery'], function($) {
         function evaluateCodeInEditor() {
             try {
                 $('.output-box').removeClass("exception");
-                loescheAusgabe();
+                clearOutput();
                 $('#output').addClass("running");
-                var result = eval(editor.getValue());
+                $('#output').css({'background-color': '#fff7ae'});
+                var result = playground.eval(editor.getValue());
                 if (result !== undefined)
-                    druckeInZeile('\n>> ' + dumpObject(result))
+                    lineOutput('\n>> ' + dumpObject(result))
             } catch (ex) {
                 $('.output-box').addClass("exception");
                 $('#exception-display').val(ex.message);
             } finally {
-//                $('#output').animate({'background-color': '#d3d3d3'});
                 setTimeout(function() {
-                    $('#output').removeClass("running");
+                    $('#output').animate({'background-color': '#d3d3d3'}, {complete:
+                        function() {
+                            $('#output').removeClass("running");
+                        }
+                    });
                 }, 500);
             }
         }

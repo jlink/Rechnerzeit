@@ -1,15 +1,7 @@
 var App = {};
 
 require.config({
-    baseUrl: '/js',
-    paths: {
-        jquery: 'lib/jquery-1.8.2',
-        underscore: 'lib/underscore',
-        backbone: 'lib/backbone',
-//        ace: 'lib/ace/ace',
-        domReady: 'lib/domReady',
-        rechnerzeit: 'rechnerzeit'
-    },
+    baseUrl: '/js/lib',
     shim: {
         backbone: {
             deps: ["underscore", "jquery"],
