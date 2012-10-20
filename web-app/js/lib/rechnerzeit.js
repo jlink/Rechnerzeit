@@ -97,10 +97,10 @@ define(['rechnerzeit-playground', 'backbone', 'jquery', 'jquery.animate-colors-m
             },
             onContinuousExecutionChange: function() {
                 if (this.currentSession.get('continuousExecution')) {
-                    this.editor.session.on('change', this.onEditorChange);
+                    this.currentSession.on('change:program', this.onProgramChange);
                     this.evaluateProgram();
                 } else {
-                    this.editor.session.removeListener('change', this.onEditorChange);
+                    this.currentSession.off('change:program', this.onProgramChange);
                 }
             },
             toggleContinuousExecution: function() {
