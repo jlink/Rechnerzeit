@@ -1,5 +1,3 @@
-var App = {};
-
 require.config({
     baseUrl: '/js/lib',
     shim: {
@@ -10,11 +8,10 @@ require.config({
     }
 });
 
-require([ 'jquery', 'backbone', 'router', 'rechnerzeit', 'domReady'], function($, Backbone, Router, Rechnerzeit, domReady){
+require(['rechnerzeit', 'domReady'], function(Rechnerzeit, domReady){
 
     domReady(function() {
-        App.router = new Router();
-        Rechnerzeit.init();
+        Rechnerzeit.start();
     });
 
 });

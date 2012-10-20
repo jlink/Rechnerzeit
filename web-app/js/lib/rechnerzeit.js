@@ -1,13 +1,42 @@
 define(['rechnerzeit-playground', 'backbone', 'jquery', 'jquery.animate-colors-min'], function(playground, Backbone, $) {
-        var rechnerzeit = { }
+        var rechnerzeit = { };
+        var playgroundView;
+        var router;
 
-        var currentUserSession = null;
-        var editor = null;
-        var pendingChange = null;
+        var Router = Backbone.Router.extend({
+
+            initialize: function() {
+                Backbone.history.start({pushState: true});
+            },
+
+            routes: {
+                ':sessionId'    : 'home',
+                ''              : 'home'
+            },
+
+            home: function(sessionId) {
+                if (sessionId === 'clear') {
+                    this.clearSession();
+                    return
+                }
+                if (sessionId) {
+                    localStorage.setItem('sessionId', sessionId);
+                }
+                if (localStorage.getItem('sessionId')) {
+                    this.navigate(localStorage.getItem('sessionId'), {replace: true});
+                }
+            },
+
+            clearSession: function() {
+                localStorage.removeItem('sessionId');
+                this.navigate('/', {replace: true});
+            }
+        });
 
         var UserSession = Backbone.Model.extend({
             urlRoot: '/session',
             defaults: {
+                continuousExecution: true,
                 "program":  "// Ein kleines Programm\n" +
                     "var name = 'Jannek';\n" +
                     "var geboren = 2001;\n" +
@@ -15,8 +44,81 @@ define(['rechnerzeit-playground', 'backbone', 'jquery', 'jquery.animate-colors-m
                     "drucke('Hallo, ' + name + '. ');\n" +
                     "druckeInZeile('Heute ist der ' + heute() + '. Es ist jetzt ' + jetzt());\n" +
                     "druckeInZeile('Du bist ' + alter + ' Jahre alt.');\n"
+            },
+            toggleContinuousExecution: function() {
+                this.set('continuousExecution', !this.get('continuousExecution'));
             }
         });
+
+        var PlaygroundView = Backbone.View.extend({
+            el: $('#playground'),
+            events: {
+                'click #single-execution'       : 'evaluateProgram',
+                'click #continuous-execution'   : 'toggleContinuousExecution'
+            },
+            initialize: function(){
+                _.bindAll(this, 'initEditor', 'onEditorChange', 'gotoEditorEnd', 'onProgramChange', 'evaluateProgram', 'initUserSession',
+                    'toggleContinuousExecution', 'onContinuousExecutionChange');
+                this.initEditor();
+                this.initUserSession(_.bind(function() {
+                    this.editor.setValue(this.currentSession.get('program'));
+                    $('#continuous-execution').attr('checked', this.currentSession.get('continuousExecution'));
+                    this.gotoEditorEnd();
+                    $('#editor textarea').focus();
+                }, this));
+            },
+            initEditor: function() {
+                this.editor = ace.edit("editor");
+                this.editor.setTheme("ace/theme/eclipse");
+                this.editor.session.setMode("ace/mode/javascript");
+                this.editor.setShowPrintMargin(false);
+                this.editor.session.on('change', this.onEditorChange);
+                this.editor.commands.addCommand({
+                    name: 'ausfuehren',
+                    bindKey: {win: 'Ctrl-Y',  mac: 'Command-Y'},
+                    exec: this.evaluateProgram
+                });
+            },
+            initUserSession:function (after) {
+                this.currentSession = new UserSession();
+                this.currentSession.on('change:program', this.onProgramChange);
+                this.currentSession.on('change:continuousExecution', this.onContinuousExecutionChange);
+                after();
+            },
+            onEditorChange: function() {
+                this.currentSession.set('program', this.editor.getValue());
+            },
+            gotoEditorEnd: function() {
+                this.editor.gotoLine(this.editor.session.getLength());
+            },
+            onProgramChange: function() {
+                clearTimeout(this.pendingChange);
+                this.pendingChange = setTimeout(this.evaluateProgram, 1000)
+            },
+            onContinuousExecutionChange: function() {
+                if (this.currentSession.get('continuousExecution')) {
+                    this.editor.session.on('change', this.onEditorChange);
+                    this.evaluateProgram();
+                } else {
+                    this.editor.session.removeListener('change', this.onEditorChange);
+                }
+            },
+            toggleContinuousExecution: function() {
+                this.currentSession.toggleContinuousExecution();
+            },
+            evaluateProgram: function() {
+                evaluateCodeInPlayground(this.currentSession.get('program'));
+            }
+
+        });
+
+        function dumpObject(obj) {
+            if (typeof(obj) === 'function') {
+                return obj.toString()
+            }
+
+            return JSON.stringify(obj)
+        }
 
         function clearOutput(text) {
             $('#output').val('');
@@ -27,13 +129,13 @@ define(['rechnerzeit-playground', 'backbone', 'jquery', 'jquery.animate-colors-m
             $('#output').val(old + text + '\n');
         }
 
-        function evaluateCodeInEditor() {
+        function evaluateCodeInPlayground(code) {
             try {
                 $('.output-box').removeClass("exception");
                 clearOutput();
                 $('#output').addClass("running");
                 $('#output').css({'background-color': '#fff7ae'});
-                var result = playground.eval(editor.getValue());
+                var result = playground.eval(code);
                 if (result !== undefined)
                     lineOutput('\n>> ' + dumpObject(result))
             } catch (ex) {
@@ -50,88 +152,9 @@ define(['rechnerzeit-playground', 'backbone', 'jquery', 'jquery.animate-colors-m
             }
         }
 
-        function dumpObject(obj) {
-            if (typeof(obj) === 'function') {
-                return obj.toString()
-            }
-
-            return JSON.stringify(obj)
-        }
-
-        function onEditorChange() {
-            clearTimeout(pendingChange);
-            pendingChange = setTimeout(function() {
-                evaluateCodeInEditor();
-            }, 1000)
-        }
-
-        function gotoEnd() {
-            editor.gotoLine(editor.session.getLength());
-        }
-
-        function initEditor() {
-            editor = ace.edit("editor");
-            editor.setTheme("ace/theme/eclipse");
-            editor.getSession().setMode("ace/mode/javascript");
-            editor.setShowPrintMargin(false);
-            editor.getSession().on('change', onEditorChange);
-            editor.commands.addCommand({
-                name: 'ausfuehren',
-                bindKey: {win: 'Ctrl-Y',  mac: 'Command-Y'},
-                exec: function(editor) {
-                    evaluateCodeInEditor();
-                }
-            });
-        }
-
-        function wireControls() {
-            function onStopExecution() {
-                $('#stop-execution').unbind('click', onStopExecution);
-                $('#stop-execution').addClass("disabled");
-                $('#continuous-execution').click(onContinuousExecution);
-                $('#continuous-execution').removeClass("disabled");
-                editor.getSession().removeListener('change', onEditorChange);
-            }
-            function onContinuousExecution() {
-                $('#continuous-execution').unbind('click', onContinuousExecution);
-                $('#continuous-execution').addClass("disabled");
-                $('#stop-execution').click(onStopExecution);
-                $('#stop-execution').removeClass("disabled");
-                evaluateCodeInEditor();
-                editor.getSession().on('change', onEditorChange);
-            }
-            function onSingleExecution() {
-                evaluateCodeInEditor();
-            }
-            $('#single-execution').click(onSingleExecution);
-            $('#stop-execution').click(onStopExecution);
-        }
-
-        function initSession(afterwards) {
-            if (localStorage.getItem('sessionId')) {
-                currentUserSession = new UserSession({id: localStorage.getItem('sessionId')});
-                currentUserSession.fetch({
-                        success: function(newSession) {
-                            afterwards();
-                        }, error: function(msg, err) {
-                            alert("error: " + dumpObject(err));
-                        }
-                    }
-                );
-            } else {
-                currentUserSession = new UserSession();
-                afterwards();
-            }
-        }
-
-        rechnerzeit.init = function() {
-            wireControls();
-            initEditor();
-            initSession(function() {
-                editor.setValue(currentUserSession.get('program'));
-                gotoEnd();
-                $('#editor textarea').focus();
-            });
+        rechnerzeit.start = function() {
+            router = new Router();
+            playgroundView = new PlaygroundView();
         };
 
         return rechnerzeit;

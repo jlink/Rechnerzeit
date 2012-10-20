@@ -15,20 +15,23 @@
 
 <header><h1>Lerne zu programmieren</h1></header>
 
-<section class="output-box">
-    <div id="editor"></div>
-</section>
+<article id="playground">
+    <section class="output-box">
+        <div id="editor"></div>
+    </section>
 
-<section class="controls">
-    <span id="single-execution" class="control"><g:img dir="images/silk-icons" file="control_play.png"/>Programm ausführen</span>
-    <span id="continuous-execution" class="control disabled"><g:img dir="images/silk-icons" file="control_repeat.png"/>Programm ständig ausführen</span>
-    <span id="stop-execution" class="control"><g:img dir="images/silk-icons" file="control_stop.png"/>Ständige Ausführung stoppen</span>
-</section>
+    <section class="controls">
+        <button id="single-execution" class="control"><g:img dir="images/silk-icons" file="control_play.png"/>Programm ausführen</button>
+        <span class="control">
+            <g:checkBox name="continuous-execution"/><label for="continuous-execution">&nbsp;Ständige Programmausführung</label>
+        </span>
+    </section>
 
-<section class="output-box">
-    <textarea id="output" readonly="readonly"></textarea>
-    <textarea id="exception-display" readonly="readonly"></textarea>
-</section>
+    <section class="output-box">
+        <textarea id="output" readonly="readonly"></textarea>
+        <textarea id="exception-display" readonly="readonly"></textarea>
+    </section>
+</article>
 
 <footer>
     <g:link uri="wasistdas">Was ist Rechnerzeit?</g:link>
