@@ -45,8 +45,14 @@ define(['rechnerzeit-playground', 'backbone', 'jquery', 'jquery.animate-colors-m
                     "druckeInZeile('Heute ist der ' + heute() + '. Es ist jetzt ' + jetzt());\n" +
                     "druckeInZeile('Du bist ' + alter + ' Jahre alt.');\n"
             },
+            initialize: function() {
+                _.bindAll(this, 'runProgram');
+            },
             toggleContinuousExecution: function() {
                 this.set('continuousExecution', !this.get('continuousExecution'));
+            },
+            runProgram: function() {
+                return playground.eval(this.get('program'));
             }
         });
 
@@ -107,7 +113,7 @@ define(['rechnerzeit-playground', 'backbone', 'jquery', 'jquery.animate-colors-m
                 this.currentSession.toggleContinuousExecution();
             },
             evaluateProgram: function() {
-                evaluateCodeInPlayground(this.currentSession.get('program'));
+                evaluateInPlayground(this.currentSession.runProgram);
             }
 
         });
@@ -129,13 +135,13 @@ define(['rechnerzeit-playground', 'backbone', 'jquery', 'jquery.animate-colors-m
             $('#output').val(old + text + '\n');
         }
 
-        function evaluateCodeInPlayground(code) {
+        function evaluateInPlayground(code) {
             try {
                 $('.output-box').removeClass("exception");
                 clearOutput();
                 $('#output').addClass("running");
                 $('#output').css({'background-color': '#fff7ae'});
-                var result = playground.eval(code);
+                var result = code();
                 if (result !== undefined)
                     lineOutput('\n>> ' + dumpObject(result))
             } catch (ex) {

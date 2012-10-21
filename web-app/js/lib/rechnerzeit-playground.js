@@ -36,7 +36,6 @@ define(['jquery'], function($) {
         }
 
         return (function() {
-            function quatsch() {return 42}
             return {
                 eval: evaluateCode
             }
