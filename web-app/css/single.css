@@ -31,6 +31,17 @@ p {
     background-color: white;
 }
 
+#plainEditor {
+    padding: 0.3em;
+    width: 100%;
+    height: 100%;
+    border: none;
+    resize: none;
+    font-size: 12pt;
+    white-space: nowrap;
+    overflow:scroll;
+}
+
 .output-box {
     padding: 1em;
 }

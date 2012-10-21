@@ -1,4 +1,4 @@
-define(['rechnerzeit.playground', 'backbone', 'jquery', 'jquery.animate-colors-min'], function(playground, Backbone, $) {
+define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery', 'jquery.animate-colors-min'], function(playground, isMobile, Backbone, $) {
         var rechnerzeit = { };
         var playgroundView;
         var router;
@@ -62,7 +62,7 @@ define(['rechnerzeit.playground', 'backbone', 'jquery', 'jquery.animate-colors-m
             },
             initialize: function(){
                 _.bindAll(this, 'initEditor', 'onEditorChange', 'gotoEditorEnd', 'onProgramChange', 'evaluateProgram', 'initUserSession',
-                    'toggleContinuousExecution', 'onContinuousExecutionChange');
+                    'toggleContinuousExecution', 'onContinuousExecutionChange', 'initAceEditor', 'initPlainEditor');
                 this.initEditor();
                 this.initUserSession(_.bind(function() {
                     this.editor.setValue(this.currentSession.get('program'));
@@ -72,6 +72,23 @@ define(['rechnerzeit.playground', 'backbone', 'jquery', 'jquery.animate-colors-m
                 }, this));
             },
             initEditor: function() {
+                if (isMobile.any())
+                    this.initPlainEditor();
+                else
+                    this.initAceEditor();
+            },
+            initPlainEditor: function() {
+                $('#editor').html($("<textarea id='plainEditor'/>"));
+                this.editor = {
+                    gotoLine: function() {},
+                    getValue: function() {$('#plainEditor').val()},
+                    setValue: function(text) {$('#plainEditor').val(text)},
+                    session: {getLength: function() {return 0;}}
+                }
+                //Does not work:
+                $('#plainEditor').change(this.onEditorChange);
+            },
+            initAceEditor: function() {
                 this.editor = ace.edit("editor");
                 this.editor.setTheme("ace/theme/eclipse");
                 this.editor.session.setMode("ace/mode/javascript");
@@ -83,6 +100,7 @@ define(['rechnerzeit.playground', 'backbone', 'jquery', 'jquery.animate-colors-m
                     exec: this.evaluateProgram
                 });
             },
+
             initUserSession:function (after) {
                 this.currentSession = new UserSession();
                 this.currentSession.on('change:program', this.onProgramChange);
