@@ -23,7 +23,7 @@
     <section class="controls">
         <button id="single-execution" class="control"><g:img dir="images/silk-icons" file="control_play.png"/>Programm ausführen</button>
         <span class="control">
-            <g:checkBox name="continuous-execution"/><label for="continuous-execution">&nbsp;Ständige Programmausführung</label>
+            <g:checkBox name="continuous-execution"/><label for="continuous-execution">Ständige Programmausführung</label>
         </span>
     </section>
 

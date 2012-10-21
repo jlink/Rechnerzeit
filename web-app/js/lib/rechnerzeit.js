@@ -78,15 +78,23 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                     this.initAceEditor();
             },
             initPlainEditor: function() {
-                $('#editor').html($("<textarea id='plainEditor'/>"));
+                var editorArea = $("<textarea id='plainEditor'/>");
+                var changeCallback = this.onEditorChange;
+                $('#editor').append(editorArea);
                 this.editor = {
-                    gotoLine: function() {},
-                    getValue: function() {$('#plainEditor').val()},
-                    setValue: function(text) {$('#plainEditor').val(text)},
+                    gotoLine: function() {
+//                        editorArea.scrollTop(
+//                            editorArea[0].scrollHeight - editorArea.height()
+//                        );
+                    },
+                    getValue: function() {return editorArea.val();},
+                    setValue: function(text) {
+                        editorArea.val(text);
+                        changeCallback();
+                    },
                     session: {getLength: function() {return 0;}}
                 }
-                //Does not work:
-                $('#plainEditor').change(this.onEditorChange);
+                editorArea.keyup(changeCallback);
             },
             initAceEditor: function() {
                 this.editor = ace.edit("editor");
