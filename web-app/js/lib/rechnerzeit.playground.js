@@ -1,13 +1,14 @@
 define(['jquery'], function($) {
 
+        var output
+
         function drucke(text) {
-            var old = $('#output').val();
-            $('#output').val(old + text);
+            var old = output.val();
+            output.val(old + text);
         }
 
         function druckeInZeile(text) {
-            var old = $('#output').val();
-            $('#output').val(old + text + '\n');
+            drucke(text + '\n');
         }
 
         function heute() {
@@ -31,7 +32,8 @@ define(['jquery'], function($) {
             }
         }
 
-        function evaluateCode(code) {
+        function evaluateCode(code, outputTextArea) {
+            output = outputTextArea;
             return eval(code);
         }
 

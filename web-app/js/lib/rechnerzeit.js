@@ -1,4 +1,4 @@
-define(['rechnerzeit-playground', 'backbone', 'jquery', 'jquery.animate-colors-min'], function(playground, Backbone, $) {
+define(['rechnerzeit.playground', 'backbone', 'jquery', 'jquery.animate-colors-min'], function(playground, Backbone, $) {
         var rechnerzeit = { };
         var playgroundView;
         var router;
@@ -52,7 +52,7 @@ define(['rechnerzeit-playground', 'backbone', 'jquery', 'jquery.animate-colors-m
                 this.set('continuousExecution', !this.get('continuousExecution'));
             },
             runProgram: function() {
-                return playground.eval(this.get('program'));
+                return playground.eval(this.get('program'), $('#output'));
             }
         });
 
