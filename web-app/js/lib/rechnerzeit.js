@@ -10,15 +10,13 @@ define(['rechnerzeit.playground', 'backbone', 'jquery', 'jquery.animate-colors-m
             },
 
             routes: {
-                ':sessionId'    : 'home',
+                'clear'    : 'clearSession',
+                'clear/'    : 'clearSession',
+                '*sessionId'    : 'home',
                 ''              : 'home'
             },
 
             home: function(sessionId) {
-                if (sessionId === 'clear') {
-                    this.clearSession();
-                    return
-                }
                 if (sessionId) {
                     localStorage.setItem('sessionId', sessionId);
                 }
