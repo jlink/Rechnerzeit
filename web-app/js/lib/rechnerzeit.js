@@ -51,6 +51,7 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
 
             clearSession: function() {
                 clearStoredSessionId();
+                hideSessionMenu();
                 this.navigate('/', {replace: true});
             }
         });
@@ -82,12 +83,12 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
         var PlaygroundView = Backbone.View.extend({
             el: $('#playground'),
             events: {
-                'click #single-execution'       : 'evaluateOnly',
+                'click #single-execution'       : 'evaluateProgram',
                 'click #continuous-execution'   : 'toggleContinuousExecution'
             },
             initialize: function(){
-                _.bindAll(this, 'initEditor', 'onEditorChange', 'gotoEditorEnd', 'onProgramChange', 'evaluateProgram', 'initUserSession',
-                    'toggleContinuousExecution', 'onContinuousExecutionChange', 'initAceEditor', 'initPlainEditor');
+                _.bindAll(this, 'initEditor', 'onEditorChange', 'gotoEditorEnd', 'onProgramChange', 'continuousSaveAndExecute', 'initUserSession',
+                    'toggleContinuousExecution', 'initAceEditor', 'initPlainEditor', 'evaluateProgram');
                 this.firstRun = true;
                 this.initEditor();
                 this.initUserSession();
@@ -133,7 +134,6 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             initUserSession:function () {
                 var doWithSession = _.bind(function(userSession) {
                     this.currentSession.on('change:program', this.onProgramChange);
-                    this.currentSession.on('change:continuousExecution', this.onContinuousExecutionChange);
                     this.editor.setValue(this.currentSession.get('program'));
                     $('#continuous-execution').attr('checked', this.currentSession.get('continuousExecution'));
                     this.gotoEditorEnd();
@@ -157,7 +157,7 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                     );
                 } else {
                     this.currentSession = new UserSession();
-                    $('#session-nav').hide();
+                    hideSessionMenu();
                     doWithSession(this.currentSesssion);
                 }
             },
@@ -169,20 +169,15 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             },
             onProgramChange: function() {
                 clearTimeout(this.pendingChange);
-                this.pendingChange = setTimeout(this.evaluateProgram, 1000)
-            },
-            onContinuousExecutionChange: function() {
-                if (this.currentSession.get('continuousExecution')) {
-                    this.currentSession.on('change:program', this.onProgramChange);
-                    this.evaluateProgram();
-                } else {
-                    this.currentSession.off('change:program', this.onProgramChange);
-                }
+                this.pendingChange = setTimeout(this.continuousSaveAndExecute, 1000)
             },
             toggleContinuousExecution: function() {
                 this.currentSession.toggleContinuousExecution();
+                if (this.currentSession.get('continuousExecution')) {
+                    this.evaluateProgram();
+                }
             },
-            evaluateProgram: function() {
+            continuousSaveAndExecute: function() {
                 if (this.firstRun) {
                     this.firstRun = false;
                     return;
@@ -197,9 +192,11 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                     },
                     error: function(msg, err){ alert(dumpObject(err))}
                 });
-                evaluateInPlayground(this.currentSession.runProgram);
+                if (this.currentSession.get('continuousExecution')) {
+                    this.evaluateProgram();
+                }
             },
-            evaluateOnly: function() {
+            evaluateProgram: function() {
                 evaluateInPlayground(this.currentSession.runProgram);
             }
 
@@ -209,6 +206,10 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             var mailto = $('#send-program').attr('href') + '&body=' + window.location.href
             $('#send-program').attr('href', mailto);
             $('#session-nav').show();
+        }
+
+        function hideSessionMenu() {
+            $('#session-nav').hide();
         }
 
         function clearOutput(text) {

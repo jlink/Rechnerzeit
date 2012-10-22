@@ -4,14 +4,17 @@ class SessionController {
     def userSessionService
 
     def show() {
-        println("show: $params.id")
+        log.debug("show: $params.id")
 
         def userSession = userSessionService.get(params.id)
+        renderAnswer(userSession)
+    }
+
+    private void renderAnswer(userSession) {
         if (userSession) {
-    //        println(userSession)
             renderUserSession(userSession)
         } else {
-            render(contentType:"text/json") {
+            render(contentType: "text/json") {
                 error = true
                 reason = "No stored session with id $params.id"
             }
@@ -28,29 +31,26 @@ class SessionController {
     }
 
     def update() {
-        println("update")
+        log.debug("update: $params.id")
 
         def userSession = params2userSession(params)
-//        println(userSession)
         userSession = userSessionService.update(userSession)
-        renderUserSession(userSession)
+        renderAnswer(userSession)
     }
 
     def save() {
-        println("save: $params.id")
-
         def userSession = params2userSession(params)
-//        println(userSession)
         userSession = userSessionService.save(userSession)
-//        println(userSession)
+        log.debug("save new session: $userSession.id")
         renderUserSession(userSession)
     }
 
     def delete() {
-        println("delete: $params.id")
+        log.debug("delete: $params.id")
 
         render(contentType:"text/json") {
-            info(success: true)
+            error = true
+            reason = 'Deleting sessions not yet implemented'
         }
     }
 
