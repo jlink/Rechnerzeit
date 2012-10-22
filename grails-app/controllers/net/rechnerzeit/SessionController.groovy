@@ -1,41 +1,53 @@
 package net.rechnerzeit
 
-import grails.converters.JSON
-
 class SessionController {
+    def userSessionService
 
     def show() {
-        println("show")
-        println(params.id)
+        println("show: $params.id")
 
-        render(contentType:"text/json") {
-            program = '//Vom Server'
+        def userSession = userSessionService.get(params.id)
+//        println(userSession)
+        renderUserSession(userSession)
+    }
+
+    private void renderUserSession(userSession) {
+        render(contentType: "text/json") {
+            id = userSession.id
+            program = userSession.program
+            continuousExecution = userSession.continuousExecution
         }
     }
 
     def update() {
         println("update")
-        println(params)
 
-        render(contentType:"text/json") {
-            info(success: false)
-        }
+        def userSession = params2userSession(params)
+//        println(userSession)
+        userSession = userSessionService.update(userSession)
+        renderUserSession(userSession)
     }
 
     def save() {
-        println("save")
-        println(params)
+        println("save: $params.id")
 
-        render(text: '1235');
+        def userSession = params2userSession(params)
+//        println(userSession)
+        userSession = userSessionService.save(userSession)
+//        println(userSession)
+        renderUserSession(userSession)
     }
 
     def delete() {
-        println("delete")
-        println(params)
+        println("delete: $params.id")
 
         render(contentType:"text/json") {
             info(success: false)
         }
+    }
+
+    private params2userSession(params) {
+        params.subMap(['id', 'lastChangeDate', 'program', 'continuousExecution'])
     }
 
 }

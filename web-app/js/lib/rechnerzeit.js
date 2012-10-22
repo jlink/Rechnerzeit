@@ -3,6 +3,26 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
         var playgroundView;
         var router;
 
+        function getStoredSessionId() {
+            return localStorage.getItem('sessionId')
+        }
+
+        function setStoredSessionId(sessionId) {
+            localStorage.setItem('sessionId', sessionId);
+        }
+
+        function showError(err) {
+            alert("ERROR: " + dumpObject(err));
+        }
+
+        function dumpObject(obj) {
+            if (typeof(obj) === 'function') {
+                return obj.toString()
+            }
+
+            return JSON.stringify(obj)
+        }
+
         var Router = Backbone.Router.extend({
 
             initialize: function() {
@@ -18,10 +38,10 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
 
             home: function(sessionId) {
                 if (sessionId) {
-                    localStorage.setItem('sessionId', sessionId);
+                    setStoredSessionId(sessionId);
                 }
-                if (localStorage.getItem('sessionId')) {
-                    this.navigate(localStorage.getItem('sessionId'), {replace: true});
+                if (getStoredSessionId()) {
+                    this.navigate(getStoredSessionId(), {replace: true});
                 }
             },
 
@@ -35,6 +55,7 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             urlRoot: '/session',
             defaults: {
                 continuousExecution: true,
+                lastChangeDate: new Date().toLocaleString(),
                 "program":  "// Ein kleines Programm\n" +
                     "var name = 'Jannek';\n" +
                     "var geboren = 2001;\n" +
@@ -63,13 +84,9 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             initialize: function(){
                 _.bindAll(this, 'initEditor', 'onEditorChange', 'gotoEditorEnd', 'onProgramChange', 'evaluateProgram', 'initUserSession',
                     'toggleContinuousExecution', 'onContinuousExecutionChange', 'initAceEditor', 'initPlainEditor');
+                this.firstRun = true;
                 this.initEditor();
-                this.initUserSession(_.bind(function() {
-                    this.editor.setValue(this.currentSession.get('program'));
-                    $('#continuous-execution').attr('checked', this.currentSession.get('continuousExecution'));
-                    this.gotoEditorEnd();
-                    $('#editor textarea').focus();
-                }, this));
+                this.initUserSession();
             },
             initEditor: function() {
                 if (isMobile.any())
@@ -109,11 +126,30 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                 });
             },
 
-            initUserSession:function (after) {
-                this.currentSession = new UserSession();
-                this.currentSession.on('change:program', this.onProgramChange);
-                this.currentSession.on('change:continuousExecution', this.onContinuousExecutionChange);
-                after();
+            initUserSession:function () {
+                var doWithSession = _.bind(function(userSession) {
+                    this.currentSession.on('change:program', this.onProgramChange);
+                    this.currentSession.on('change:continuousExecution', this.onContinuousExecutionChange);
+                    this.editor.setValue(this.currentSession.get('program'));
+                    $('#continuous-execution').attr('checked', this.currentSession.get('continuousExecution'));
+                    this.gotoEditorEnd();
+                    $('#editor textarea').focus();
+                }, this);
+
+                if (getStoredSessionId()) {
+                    this.currentSession = new UserSession({id: getStoredSessionId()});
+                    this.currentSession.fetch({
+                            success: function(session) {
+                                doWithSession(session);
+                            }, error: function(msg, err) {
+                                showError(err);
+                            }
+                        }
+                    );
+                } else {
+                    this.currentSession = new UserSession();
+                    doWithSession(this.currentSesssion);
+                }
             },
             onEditorChange: function() {
                 this.currentSession.set('program', this.editor.getValue());
@@ -137,18 +173,20 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                 this.currentSession.toggleContinuousExecution();
             },
             evaluateProgram: function() {
+                if (this.firstRun) {
+                    this.firstRun = false;
+                    return;
+                }
+                this.currentSession.save({lastChangeDate: new Date()}, {
+                    success: function(session){
+                        setStoredSessionId(session.id);
+                    },
+                    error: function(msg, err){ alert(dumpObject(err))}
+                });
                 evaluateInPlayground(this.currentSession.runProgram);
             }
 
         });
-
-        function dumpObject(obj) {
-            if (typeof(obj) === 'function') {
-                return obj.toString()
-            }
-
-            return JSON.stringify(obj)
-        }
 
         function clearOutput(text) {
             $('#output').val('');
