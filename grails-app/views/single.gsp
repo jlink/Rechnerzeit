@@ -16,6 +16,10 @@
 <header><h1>Lerne zu programmieren</h1></header>
 
 <article id="playground">
+    <nav id="session-nav" style="display: none;">
+        <g:link uri="clear">Nochmal von vorne</g:link>
+        <a id="send-program" href="mailto:?subject=Mein Programm">Programm verschicken</a>
+    </nav>
     <section class="output-box">
         <div id="editor"></div>
     </section>

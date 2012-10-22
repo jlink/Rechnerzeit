@@ -7,8 +7,16 @@ class SessionController {
         println("show: $params.id")
 
         def userSession = userSessionService.get(params.id)
-//        println(userSession)
-        renderUserSession(userSession)
+        if (userSession) {
+    //        println(userSession)
+            renderUserSession(userSession)
+        } else {
+            render(contentType:"text/json") {
+                error = true
+                reason = "No stored session with id $params.id"
+            }
+            return;
+        }
     }
 
     private void renderUserSession(userSession) {
@@ -42,7 +50,7 @@ class SessionController {
         println("delete: $params.id")
 
         render(contentType:"text/json") {
-            info(success: false)
+            info(success: true)
         }
     }
 

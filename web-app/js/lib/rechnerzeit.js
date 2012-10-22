@@ -11,8 +11,12 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             localStorage.setItem('sessionId', sessionId);
         }
 
-        function showError(err) {
-            alert("ERROR: " + dumpObject(err));
+        function clearStoredSessionId() {
+            localStorage.removeItem('sessionId');
+        }
+
+        function logError(err) {
+            console.log("ERROR: " + dumpObject(err));
         }
 
         function dumpObject(obj) {
@@ -46,7 +50,7 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             },
 
             clearSession: function() {
-                localStorage.removeItem('sessionId');
+                clearStoredSessionId();
                 this.navigate('/', {replace: true});
             }
         });
@@ -78,7 +82,7 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
         var PlaygroundView = Backbone.View.extend({
             el: $('#playground'),
             events: {
-                'click #single-execution'       : 'evaluateProgram',
+                'click #single-execution'       : 'evaluateOnly',
                 'click #continuous-execution'   : 'toggleContinuousExecution'
             },
             initialize: function(){
@@ -138,16 +142,22 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
 
                 if (getStoredSessionId()) {
                     this.currentSession = new UserSession({id: getStoredSessionId()});
+                    showSessionMenu();
                     this.currentSession.fetch({
                             success: function(session) {
+                                if (session.get("error")) {
+                                    router.clearSession();
+                                    return;
+                                }
                                 doWithSession(session);
                             }, error: function(msg, err) {
-                                showError(err);
+                                logError(err);
                             }
                         }
                     );
                 } else {
                     this.currentSession = new UserSession();
+                    $('#session-nav').hide();
                     doWithSession(this.currentSesssion);
                 }
             },
@@ -179,14 +189,27 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                 }
                 this.currentSession.save({lastChangeDate: new Date()}, {
                     success: function(session){
+                        if (session.id == getStoredSessionId())
+                            return;
                         setStoredSessionId(session.id);
+                        router.navigate(getStoredSessionId());
+                        showSessionMenu();
                     },
                     error: function(msg, err){ alert(dumpObject(err))}
                 });
                 evaluateInPlayground(this.currentSession.runProgram);
+            },
+            evaluateOnly: function() {
+                evaluateInPlayground(this.currentSession.runProgram);
             }
 
         });
+
+        function showSessionMenu() {
+            var mailto = $('#send-program').attr('href') + '&body=' + window.location.href
+            $('#send-program').attr('href', mailto);
+            $('#session-nav').show();
+        }
 
         function clearOutput(text) {
             $('#output').val('');
