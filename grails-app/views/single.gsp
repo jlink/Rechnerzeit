@@ -24,31 +24,33 @@
 
 <header><h1>Lerne zu programmieren</h1></header>
 
-<article id="course">
-    <p>Dies ist ein Text.</p>
-    <p>Dies ist ein Text.</p>
-    <p>Dies ist ein Text.</p>
-    <p>Dies ist ein Text.</p>
-    <p>Dies ist ein Text.</p>
-    <p>Dies ist ein Text.</p>
-</article>
-<article id="playground">
-    <section class="output-box">
-        <div id="editor"></div>
-    </section>
+<div id="main">
+    <article id="course">
+        <p>Dies ist ein Text.</p>
+        <p>Dies ist ein Text.</p>
+        <p>Dies ist ein Text.</p>
+        <p>Dies ist ein Text.</p>
+        <p>Dies ist ein Text.</p>
+        <p>Dies ist ein Text.</p>
+    </article>
+    <article id="playground">
+        <section class="output-box">
+            <div id="editor"></div>
+        </section>
 
-    <section class="controls">
-        <button id="single-execution" class="control"><g:img dir="images/silk-icons" file="control_play.png"/>Programm ausführen</button>
-        <span class="control">
-            <g:checkBox name="continuous-execution"/><label for="continuous-execution">Ständige Programmausführung</label>
-        </span>
-    </section>
+        <section class="controls">
+            <button id="single-execution" class="control"><g:img dir="images/silk-icons" file="control_play.png"/>Programm ausführen</button>
+            <span class="control">
+                <g:checkBox name="continuous-execution"/><label for="continuous-execution">Ständige Programmausführung</label>
+            </span>
+        </section>
 
-    <section class="output-box">
-        <textarea id="output" readonly="readonly"></textarea>
-        <textarea id="exception-display" readonly="readonly"></textarea>
-    </section>
-</article>
+        <section class="output-box">
+            <textarea id="output" readonly="readonly"></textarea>
+            <textarea id="exception-display" readonly="readonly"></textarea>
+        </section>
+    </article>
+</div>
 
 <footer>
     <g:link uri="wasistdas">Was ist Rechnerzeit?</g:link>

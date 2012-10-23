@@ -44,12 +44,24 @@ nav a {
     text-decoration: none;
 }
 
-#course {
+#main {
+    position: relative;
+    min-width: 960px;
     background-color: white;
-    float: left;
+}
+
+#course {
+    position: absolute;
+    background-color: white;
+    width: 290px;
+    margin: 0 5px;
+    border: 2px solid grey;
 }
 
 #playground {
+    position: absolute;
+    left: 300px;
+    right: 0px;
     background-color: rgb(245, 245, 255);
 }
 
@@ -74,7 +86,10 @@ nav a {
 }
 
 .output-box {
-    padding: 0.5em 1em;
+    /*padding-top: 0.5em;*/
+    padding-right: 1em;
+    padding-left: 1em;
+    padding-bottom: 0.5em;
 }
 
 #output {
