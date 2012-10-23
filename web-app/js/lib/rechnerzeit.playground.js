@@ -1,10 +1,9 @@
 define(['jquery'], function ($) {
 
-        var output
+        var runner
 
         function drucke(text) {
-            var old = output.val();
-            output.val(old + text);
+            runner.print(text);
         }
 
         function druckeInZeile(text) {
@@ -41,8 +40,8 @@ define(['jquery'], function ($) {
             return ("0" + number).slice(-2)
         }
 
-        function evaluateCode(code, outputTextArea) {
-            output = outputTextArea;
+        function evaluateCode(code, codeRunner) {
+            runner = codeRunner;
             return eval(code);
         }
 

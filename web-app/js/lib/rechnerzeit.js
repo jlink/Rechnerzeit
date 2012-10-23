@@ -1,6 +1,7 @@
 define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery', 'jquery.animate-colors-min'], function(playground, isMobile, Backbone, $) {
         var rechnerzeit = { };
         var currentSession;
+        var codeRunner;
         var playgroundView;
         var router;
 
@@ -24,8 +25,17 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             if (typeof(obj) === 'function') {
                 return obj.toString()
             }
-
             return JSON.stringify(obj)
+        }
+
+        function showSessionMenu() {
+            var mailto = $('#send-program').attr('href') + '&body=' + window.location.href
+            $('#send-program').attr('href', mailto);
+            $('#session-nav').show();
+        }
+
+        function hideSessionMenu() {
+            $('#session-nav').hide();
         }
 
         var Router = Backbone.Router.extend({
@@ -57,6 +67,36 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             }
         });
 
+        var CodeRunner = Backbone.Model.extend({
+            defaults: {
+                output: '',
+                result: undefined,
+                exception: null,
+                running:  false
+            },
+            initialize: function() {
+                _.bindAll(this, 'run', 'print');
+            },
+            print: function(text) {
+                var old = this.get('output');
+                this.set('output', old + text);
+            },
+            run: function(code) {
+                this.set('output', '');
+                this.set('result', null);
+                this.set('exception', null);
+                this.set('running', true);
+                try {
+                    var result = code(this);
+                    this.set('result', result);
+                } catch (ex) {
+                    this.set('exception', ex);
+                } finally {
+                    this.set('running', false);
+                }
+            }
+        });
+
         var UserSession = Backbone.Model.extend({
             urlRoot: '/session',
             defaults: {
@@ -80,7 +120,7 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                 this.set('continuousExecution', !this.get('continuousExecution'));
             },
             runProgram: function() {
-                return playground.eval(this.get('program'), $('#output'));
+                return playground.eval(this.get('program'), codeRunner);
             }
         });
 
@@ -91,10 +131,13 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                 'click #continuous-execution'   : 'toggleContinuousExecution'
             },
             initialize: function(){
-                _.bindAll(this, 'initEditor', 'onEditorChange', 'gotoEditorEnd', 'onProgramChange', 'continuousSaveAndExecute', 'initUserSession',
+                _.bindAll(this, 'initCodeRunner', 'onRunnerOutputChange', 'onRunnerResultChange', 'onRunnerExceptionChange', 'onRunnerRunningChange',
+                    'initEditor', 'onEditorChange', 'gotoEditorEnd',
+                    'onProgramChange', 'continuousSaveAndExecute', 'initUserSession',
                     'toggleContinuousExecution', 'initAceEditor', 'initPlainEditor', 'evaluateProgram');
                 this.firstRun = true;
                 this.initEditor();
+                this.initCodeRunner();
                 this.initUserSession();
             },
             initEditor: function() {
@@ -102,6 +145,46 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                     this.initPlainEditor();
                 else
                     this.initAceEditor();
+            },
+            initCodeRunner: function() {
+                codeRunner.on('change:output', this.onRunnerOutputChange);
+                codeRunner.on('change:result', this.onRunnerResultChange);
+                codeRunner.on('change:exception', this.onRunnerExceptionChange);
+                codeRunner.on('change:running', this.onRunnerRunningChange);
+            },
+            onRunnerExceptionChange: function() {
+                var ex = codeRunner.get('exception');
+                if (ex) {
+                    $('#exception-display').val(ex.message);
+                    $('.output-box').addClass("exception");
+                } else {
+                    $('#exception-display').val('');
+                    $('.output-box').removeClass("exception");
+                }
+            },
+            onRunnerRunningChange: function() {
+                if (codeRunner.get('running')) {
+                    $('#output').addClass("running");
+                    $('#output').css({'background-color': '#fff7ae'});
+                } else {
+                    setTimeout(function() {
+                        $('#output').animate({'background-color': '#d3d3d3'}, {complete:
+                            function() {
+                                $('#output').removeClass("running");
+                            }
+                        });
+                    }, 500);
+                }
+            },
+            onRunnerOutputChange: function() {
+                $('#output').val(codeRunner.get('output'));
+            },
+            onRunnerResultChange: function() {
+                var result = codeRunner.get('result');
+                if (result === undefined)
+                    return
+                var old = $('#output').val();
+                $('#output').val(old + '\n>> ' + dumpObject(result));
             },
             initPlainEditor: function() {
                 var editorArea = $("<textarea id='plainEditor'/>");
@@ -198,55 +281,15 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                 }
             },
             evaluateProgram: function() {
-                evaluateInPlayground(currentSession.runProgram);
+                codeRunner.run(currentSession.runProgram);
+//                evaluateInPlayground(currentSession.runProgram);
             }
 
         });
 
-        function showSessionMenu() {
-            var mailto = $('#send-program').attr('href') + '&body=' + window.location.href
-            $('#send-program').attr('href', mailto);
-            $('#session-nav').show();
-        }
-
-        function hideSessionMenu() {
-            $('#session-nav').hide();
-        }
-
-        function clearOutput(text) {
-            $('#output').val('');
-        }
-
-        function lineOutput(text) {
-            var old = $('#output').val();
-            $('#output').val(old + text + '\n');
-        }
-
-        function evaluateInPlayground(code) {
-            try {
-                $('.output-box').removeClass("exception");
-                clearOutput();
-                $('#output').addClass("running");
-                $('#output').css({'background-color': '#fff7ae'});
-                var result = code();
-                if (result !== undefined)
-                    lineOutput('\n>> ' + dumpObject(result))
-            } catch (ex) {
-                $('.output-box').addClass("exception");
-                $('#exception-display').val(ex.message);
-            } finally {
-                setTimeout(function() {
-                    $('#output').animate({'background-color': '#d3d3d3'}, {complete:
-                        function() {
-                            $('#output').removeClass("running");
-                        }
-                    });
-                }, 500);
-            }
-        }
-
         rechnerzeit.start = function() {
             router = new Router();
+            codeRunner = new CodeRunner();
             currentSession = new UserSession();
             playgroundView = new PlaygroundView();
         };
