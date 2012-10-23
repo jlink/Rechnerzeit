@@ -1,4 +1,4 @@
-package rechnerzeit
+package net.rechnerzeit
 
 class UserSessionService {
 

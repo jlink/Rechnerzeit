@@ -4,7 +4,7 @@ class SessionController {
     def userSessionService
 
     def show() {
-        log.debug("show: $params.id")
+        log.debug("show session: $params.id")
 
         def userSession = userSessionService.get(params.id)
         renderAnswer(userSession)
@@ -31,7 +31,7 @@ class SessionController {
     }
 
     def update() {
-        log.debug("update: $params.id")
+        log.debug("update session: $params.id")
 
         def userSession = params2userSession(params)
         userSession = userSessionService.update(userSession)
@@ -46,7 +46,7 @@ class SessionController {
     }
 
     def delete() {
-        log.debug("delete: $params.id")
+        log.debug("delete session: $params.id")
 
         render(contentType:"text/json") {
             error = true

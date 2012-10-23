@@ -9,7 +9,7 @@
     <link rel="shortcut icon" href="${resource(dir: 'images', file: 'favicon.ico')}" type="image/x-icon">
     <script src="http://d1n0x3qji82z53.cloudfront.net/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
     <script type="text/javascript" data-main="/js/bootstrap" src="${resource(dir: 'js', file: 'lib/require-jquery.js')}"></script>
-    <link rel="stylesheet" href="${resource(dir: 'css', file: 'single.css')}" type="text/css">
+    <link rel="stylesheet" href="${resource(dir: 'css', file: 'rechnerzeit.css')}" type="text/css">
 </head>
 <body>
 

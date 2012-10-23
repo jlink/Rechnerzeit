@@ -77,6 +77,15 @@ log4j = {
     //    console name:'stdout', layout:pattern(conversionPattern: '%c{2} %m%n')
     //}
 
+    // Set level for all application artifacts
+    all 'net.rechnerzeit'
+    all 'grails.app.conf'
+    all 'grails.app.filters.net.rechnerzeit'
+    all 'grails.app.taglib.net.rechnerzeit'
+    all 'grails.app.services.net.rechnerzeit'
+    all 'grails.app.controllers.net.rechnerzeit'
+    all 'grails.app.domain.net.rechnerzeit'
+
     error  'org.codehaus.groovy.grails.web.servlet',        // controllers
            'org.codehaus.groovy.grails.web.pages',          // GSP
            'org.codehaus.groovy.grails.web.sitemesh',       // layouts

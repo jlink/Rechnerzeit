@@ -1,5 +1,6 @@
 define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery', 'jquery.animate-colors-min'], function(playground, isMobile, Backbone, $) {
         var rechnerzeit = { };
+        var currentSession;
         var playgroundView;
         var router;
 
@@ -61,7 +62,7 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             defaults: {
                 continuousExecution: true,
                 lastChangeDate: new Date().toLocaleString(),
-                "program":  "// Ein kleines Programm\n" +
+                program:  "// Ein kleines Programm\n" +
                     "var name = 'Jannek';\n" +
                     "var geboren = 2001;\n" +
                     "var alter = heute().jahr - geboren;\n" +
@@ -70,7 +71,10 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                     "druckeInZeile('Du bist ' + alter + ' Jahre alt.');\n"
             },
             initialize: function() {
-                _.bindAll(this, 'runProgram');
+                _.bindAll(this, 'runProgram', 'toggleContinuousExecution');
+                if (getStoredSessionId()) {
+                    this.id = getStoredSessionId();
+                }
             },
             toggleContinuousExecution: function() {
                 this.set('continuousExecution', !this.get('continuousExecution'));
@@ -133,21 +137,19 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
 
             initUserSession:function () {
                 var doWithSession = _.bind(function(userSession) {
-                    this.currentSession.on('change:program', this.onProgramChange);
-                    this.editor.setValue(this.currentSession.get('program'));
-                    $('#continuous-execution').attr('checked', this.currentSession.get('continuousExecution'));
+                    currentSession.on('change:program', this.onProgramChange);
+                    this.editor.setValue(currentSession.get('program'));
+                    $('#continuous-execution').attr('checked', currentSession.get('continuousExecution'));
                     this.gotoEditorEnd();
                     $('#editor textarea').focus();
                 }, this);
 
-                if (getStoredSessionId()) {
-                    this.currentSession = new UserSession({id: getStoredSessionId()});
+                if (currentSession.id) {
                     showSessionMenu();
-                    this.currentSession.fetch({
+                    currentSession.fetch({
                             success: function(session) {
                                 if (session.get("error")) {
-                                    router.clearSession();
-                                    return;
+                                    window.location.href = 'clear';
                                 }
                                 doWithSession(session);
                             }, error: function(msg, err) {
@@ -156,13 +158,12 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                         }
                     );
                 } else {
-                    this.currentSession = new UserSession();
                     hideSessionMenu();
                     doWithSession(this.currentSesssion);
                 }
             },
             onEditorChange: function() {
-                this.currentSession.set('program', this.editor.getValue());
+                currentSession.set('program', this.editor.getValue());
             },
             gotoEditorEnd: function() {
                 this.editor.gotoLine(this.editor.session.getLength());
@@ -172,8 +173,8 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                 this.pendingChange = setTimeout(this.continuousSaveAndExecute, 1000)
             },
             toggleContinuousExecution: function() {
-                this.currentSession.toggleContinuousExecution();
-                if (this.currentSession.get('continuousExecution')) {
+                currentSession.toggleContinuousExecution();
+                if (currentSession.get('continuousExecution')) {
                     this.evaluateProgram();
                 }
             },
@@ -182,7 +183,7 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                     this.firstRun = false;
                     return;
                 }
-                this.currentSession.save({lastChangeDate: new Date()}, {
+                currentSession.save({lastChangeDate: new Date()}, {
                     success: function(session){
                         if (session.id == getStoredSessionId())
                             return;
@@ -192,12 +193,12 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                     },
                     error: function(msg, err){ alert(dumpObject(err))}
                 });
-                if (this.currentSession.get('continuousExecution')) {
+                if (currentSession.get('continuousExecution')) {
                     this.evaluateProgram();
                 }
             },
             evaluateProgram: function() {
-                evaluateInPlayground(this.currentSession.runProgram);
+                evaluateInPlayground(currentSession.runProgram);
             }
 
         });
@@ -246,6 +247,7 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
 
         rechnerzeit.start = function() {
             router = new Router();
+            currentSession = new UserSession();
             playgroundView = new PlaygroundView();
         };
 

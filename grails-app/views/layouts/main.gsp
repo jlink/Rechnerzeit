@@ -10,12 +10,18 @@
 		<title><g:layoutTitle default="Rechnerzeit"/></title>
 		<meta name="viewport" content="width=device-width, initial-scale=1.0">
 		<link rel="shortcut icon" href="${resource(dir: 'images', file: 'favicon.ico')}" type="image/x-icon">
-		<link rel="stylesheet" href="${resource(dir: 'css', file: 'single.css')}" type="text/css">
+		<link rel="stylesheet" href="${resource(dir: 'css', file: 'rechnerzeit.css')}" type="text/css">
 		<g:layoutHead/>
 		<r:layoutResources />
 	</head>
 	<body>
+        <div id="home-link"><g:link uri="/">&lt;&lt;&nbsp;Rechnerzeit</g:link></div>
 		<g:layoutBody/>
+        <footer>
+            <g:link uri="wasistdas">Was ist Rechnerzeit?</g:link>
+            <g:link uri="impressum">Impressum</g:link>
+            <g:link uri="credits">Credits</g:link>
+        </footer>
 		<r:layoutResources />
-	</body>
+    </body>
 </html>

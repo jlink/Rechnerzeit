@@ -21,6 +21,22 @@ p {
     margin: 2em;
 }
 
+#home-link {
+    padding: 0.5em 1em;
+    border-bottom: 1px solid #a0a0a0;
+}
+
+a {
+    padding: 0.1em;
+    color: #6495ed;
+    text-decoration: none;
+}
+
+a:hover {
+    color: white;
+    background-color: #6495ed;
+}
+
 nav {
     padding-right: 1em;
     padding-left: 1em;
@@ -28,15 +44,9 @@ nav {
 }
 
 nav a {
-    padding: 0.1em;
     margin-left: 1em;
     color: #6495ed;
     text-decoration: none;
-}
-
-nav a:hover {
-    color: white;
-    background-color: #6495ed;
 }
 
 #playground {
@@ -135,12 +145,5 @@ footer {
 }
 
 footer a {
-    color: #6495ed;
     font-size: 0.9em;
-    text-decoration: none;
-}
-
-footer a:hover {
-    color: white;
-    background-color: #6495ed;
 }
