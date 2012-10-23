@@ -13,13 +13,26 @@
 </head>
 <body>
 
+<nav id="menu">
+    <g:link uri="clear">Programmierkurs</g:link>
+    <span id="session-nav" style="display: none">
+        %{--<g:link uri="clear">Nochmal von vorne</g:link>--}%
+        <a id="clear-program" href="clear">Nochmal von vorne</a>
+        <a id="send-program" href="mailto:?subject=Rechnerzeit: Mein Programm">Programm verschicken</a>
+    </span>
+</nav>
+
 <header><h1>Lerne zu programmieren</h1></header>
 
+<article id="course">
+    <p>Dies ist ein Text.</p>
+    <p>Dies ist ein Text.</p>
+    <p>Dies ist ein Text.</p>
+    <p>Dies ist ein Text.</p>
+    <p>Dies ist ein Text.</p>
+    <p>Dies ist ein Text.</p>
+</article>
 <article id="playground">
-    <nav id="session-nav" style="display: none;">
-        <g:link uri="clear">Nochmal von vorne</g:link>
-        <a id="send-program" href="mailto:?subject=Rechnerzeit: Mein Programm">Programm verschicken</a>
-    </nav>
     <section class="output-box">
         <div id="editor"></div>
     </section>

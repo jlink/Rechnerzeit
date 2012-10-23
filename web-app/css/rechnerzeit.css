@@ -21,12 +21,8 @@ p {
     margin: 2em;
 }
 
-#home-link {
-    padding: 0.5em 1em;
-    border-bottom: 1px solid #a0a0a0;
-}
-
 a {
+    word-spacing: -0.3em;
     padding: 0.1em;
     color: #6495ed;
     text-decoration: none;
@@ -37,16 +33,20 @@ a:hover {
     background-color: #6495ed;
 }
 
-nav {
-    padding-right: 1em;
-    padding-left: 1em;
-    padding-bottom: 0.5em;
+nav#menu {
+    padding: 0.5em 1em;
+    border-bottom: 1px solid #a0a0a0;
 }
 
 nav a {
-    margin-left: 1em;
+    margin-right: 1em;
     color: #6495ed;
     text-decoration: none;
+}
+
+#course {
+    background-color: white;
+    float: left;
 }
 
 #playground {

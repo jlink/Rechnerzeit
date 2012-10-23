@@ -31,11 +31,11 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
         function showSessionMenu() {
             var mailto = $('#send-program').attr('href') + '&body=' + window.location.href
             $('#send-program').attr('href', mailto);
-            $('#session-nav').show();
+            $('#session-nav').fadeIn();
         }
 
         function hideSessionMenu() {
-            $('#session-nav').hide();
+            $('#session-nav').fadeOut();
         }
 
         var Router = Backbone.Router.extend({
@@ -54,6 +54,7 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             home: function(sessionId) {
                 if (sessionId) {
                     setStoredSessionId(sessionId);
+                    return;
                 }
                 if (getStoredSessionId()) {
                     this.navigate(getStoredSessionId(), {replace: true});
@@ -282,7 +283,6 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             },
             evaluateProgram: function() {
                 codeRunner.run(currentSession.runProgram);
-//                evaluateInPlayground(currentSession.runProgram);
             }
 
         });

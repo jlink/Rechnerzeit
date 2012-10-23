@@ -15,7 +15,7 @@
 		<r:layoutResources />
 	</head>
 	<body>
-        <div id="home-link"><g:link uri="/">&lt;&lt;&nbsp;Rechnerzeit</g:link></div>
+        <nav id="menu"><g:link uri="/">&lt;&lt;&nbsp;Rechnerzeit</g:link></nav>
 		<g:layoutBody/>
         <footer>
             <g:link uri="wasistdas">Was ist Rechnerzeit?</g:link>
