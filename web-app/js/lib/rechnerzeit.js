@@ -1,7 +1,9 @@
-define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery', 'jquery.animate-colors-min'], function(playground, isMobile, Backbone, $) {
+define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery', 'jquery.animate-colors-min', 'jquery.ba-resize.min'], function(playground, isMobile, Backbone, $) {
         var rechnerzeit = { };
         var currentSession;
         var codeRunner;
+        var courseView;
+        var menuView;
         var playgroundView;
         var router;
 
@@ -102,6 +104,7 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             urlRoot: '/session',
             defaults: {
                 continuousExecution: true,
+                showingCourse: false,
                 lastChangeDate: new Date().toLocaleString(),
                 program:  "// Ein kleines Programm\n" +
                     "var name = 'Jannek';\n" +
@@ -125,6 +128,64 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             }
         });
 
+        var MenuView = Backbone.View.extend({
+            el: $('#menu'),
+            events: {
+                'click #show-course'        : 'clickShowCourse',
+                'click #hide-course'        : 'clickHideCourse'
+            },
+            initialize: function(){
+                _.bindAll(this, 'onShowingCourseChange', 'clickShowCourse', 'clickHideCourse', 'makeHideCourseVisible', 'makeShowCourseVisible');
+                this.onShowingCourseChange();
+                currentSession.on("change:showingCourse", this.onShowingCourseChange);
+            },
+            onShowingCourseChange: function() {
+                if (currentSession.get('showingCourse')) {
+                    this.makeHideCourseVisible();
+                } else {
+                    this.makeShowCourseVisible();
+                }
+            },
+            makeHideCourseVisible:function () {
+                this.$('#show-course').hide();
+                this.$('#hide-course').show();
+            },
+            clickShowCourse: function() {
+                currentSession.set('showingCourse', true);
+                this.makeHideCourseVisible();
+            },
+            makeShowCourseVisible:function () {
+                this.$('#show-course').show();
+                this.$('#hide-course').hide();
+            },
+            clickHideCourse: function() {
+                currentSession.set('showingCourse', false);
+                this.makeShowCourseVisible();
+            }
+        })
+
+        var CourseView = Backbone.View.extend({
+            el: $('#course'),
+            initialize: function(){
+                _.bindAll(this, 'onShowingCourseChange', 'show', 'hide');
+                this.onShowingCourseChange();
+                currentSession.on('change:showingCourse', this.onShowingCourseChange);
+            },
+            onShowingCourseChange: function() {
+                if (currentSession.get('showingCourse')) {
+                    this.show();
+                } else {
+                    this.hide();
+                }
+            },
+            show: function() {
+                this.$el.show();
+            },
+            hide: function() {
+                this.$el.hide();
+            }
+        })
+
         var PlaygroundView = Backbone.View.extend({
             el: $('#playground'),
             events: {
@@ -134,8 +195,9 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             initialize: function(){
                 _.bindAll(this, 'initCodeRunner', 'onRunnerOutputChange', 'onRunnerResultChange', 'onRunnerExceptionChange', 'onRunnerRunningChange',
                     'initEditor', 'onEditorChange', 'gotoEditorEnd',
-                    'onProgramChange', 'continuousSaveAndExecute', 'initUserSession',
-                    'toggleContinuousExecution', 'initAceEditor', 'initPlainEditor', 'evaluateProgram');
+                    'onProgramChange', 'continuousExecute', 'initUserSession',
+                    'toggleContinuousExecution', 'initAceEditor', 'initPlainEditor', 'evaluateProgram',
+                    'shiftRight', 'shiftLeft');
                 this.firstRun = true;
                 this.initEditor();
                 this.initCodeRunner();
@@ -185,18 +247,14 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                 if (result === undefined)
                     return
                 var old = $('#output').val();
-                $('#output').val(old + '\n>> ' + dumpObject(result));
+                $('#output').val(old + '\n==> ' + dumpObject(result));
             },
             initPlainEditor: function() {
                 var editorArea = $("<textarea id='plainEditor'/>");
                 var changeCallback = this.onEditorChange;
                 $('#editor').append(editorArea);
                 this.editor = {
-                    gotoLine: function() {
-//                        editorArea.scrollTop(
-//                            editorArea[0].scrollHeight - editorArea.height()
-//                        );
-                    },
+                    gotoLine: function() {},
                     getValue: function() {return editorArea.val();},
                     setValue: function(text) {
                         editorArea.val(text);
@@ -220,31 +278,12 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             },
 
             initUserSession:function () {
-                var doWithSession = _.bind(function(userSession) {
-                    currentSession.on('change:program', this.onProgramChange);
-                    this.editor.setValue(currentSession.get('program'));
-                    $('#continuous-execution').attr('checked', currentSession.get('continuousExecution'));
-                    this.gotoEditorEnd();
-                    $('#editor textarea').focus();
-                }, this);
-
-                if (currentSession.id) {
-                    showSessionMenu();
-                    currentSession.fetch({
-                            success: function(session) {
-                                if (session.get("error")) {
-                                    window.location.href = 'clear';
-                                }
-                                doWithSession(session);
-                            }, error: function(msg, err) {
-                                logError(err);
-                            }
-                        }
-                    );
-                } else {
-                    hideSessionMenu();
-                    doWithSession(this.currentSesssion);
-                }
+                this.editor.setValue(currentSession.get('program'));
+                currentSession.on('change:program', this.onProgramChange);
+                $('#continuous-execution').attr('checked', currentSession.get('continuousExecution'));
+                currentSession.on('change:continuousExecution', this.onContinuousExecutionChange);
+                this.gotoEditorEnd();
+                $('#editor textarea').focus();
             },
             onEditorChange: function() {
                 currentSession.set('program', this.editor.getValue());
@@ -254,44 +293,86 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             },
             onProgramChange: function() {
                 clearTimeout(this.pendingChange);
-                this.pendingChange = setTimeout(this.continuousSaveAndExecute, 1000)
+                this.pendingChange = setTimeout(this.continuousExecute, 1000)
             },
-            toggleContinuousExecution: function() {
-                currentSession.toggleContinuousExecution();
+            onContinuousExecutionChange: function() {
+                alert(currentSession.get('continuousExecution'))
                 if (currentSession.get('continuousExecution')) {
                     this.evaluateProgram();
                 }
             },
-            continuousSaveAndExecute: function() {
+            toggleContinuousExecution: function() {
+                currentSession.toggleContinuousExecution();
+            },
+            continuousExecute: function() {
                 if (this.firstRun) {
                     this.firstRun = false;
                     return;
                 }
-                currentSession.save({lastChangeDate: new Date()}, {
-                    success: function(session){
-                        if (session.id == getStoredSessionId())
-                            return;
-                        setStoredSessionId(session.id);
-                        router.navigate(getStoredSessionId());
-                        showSessionMenu();
-                    },
-                    error: function(msg, err){ alert(dumpObject(err))}
-                });
                 if (currentSession.get('continuousExecution')) {
                     this.evaluateProgram();
                 }
             },
             evaluateProgram: function() {
                 codeRunner.run(currentSession.runProgram);
+            },
+            shiftLeft: function() {
+                this.$el.css('background-color: red');
+            },
+            shiftRight: function() {
+                this.$el.css('background-color: blue');
             }
 
         });
 
+        function initializeUserSession(afterwards) {
+            currentSession = new UserSession();
+            if (currentSession.id) {
+                showSessionMenu();
+                currentSession.fetch({
+                        success: function(session) {
+                            if (session.get("error")) {
+                                window.location.href = 'clear';
+                            }
+                            afterwards();
+                        }, error: function(msg, err) {
+                            logError(err);
+                        }
+                    }
+                );
+            } else {
+                hideSessionMenu();
+                afterwards();
+            }
+        }
+
+        function onSessionChange() {
+            clearTimeout(this.pendingSave);
+            this.pendingSave = setTimeout(continuousSessionSave, 5000);
+        }
+
+        function continuousSessionSave() {
+            currentSession.save({lastChangeDate: new Date()}, {
+                success: function(session){
+                    if (session.id == getStoredSessionId())
+                        return;
+                    setStoredSessionId(session.id);
+                    router.navigate(getStoredSessionId());
+                    showSessionMenu();
+                },
+                error: function(msg, err){ logError(err)}
+            });
+        }
+
         rechnerzeit.start = function() {
             router = new Router();
             codeRunner = new CodeRunner();
-            currentSession = new UserSession();
-            playgroundView = new PlaygroundView();
+            initializeUserSession(function() {
+                currentSession.on('change:program change:continuousExecution change:showingCourse', onSessionChange);
+                menuView = new MenuView();
+                courseView = new CourseView();
+                playgroundView = new PlaygroundView();
+            });
         };
 
         return rechnerzeit;

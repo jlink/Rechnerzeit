@@ -14,7 +14,8 @@
 <body>
 
 <nav id="menu">
-    <g:link uri="clear">Programmierkurs</g:link>
+    <a id="show-course">Programmierkurs&nbsp;&gt;&gt;</a>
+    <a id="hide-course" style="display: none;">&lt;&lt;&nbsp;Programmierkurs</a>
     <span id="session-nav" style="display: none">
         %{--<g:link uri="clear">Nochmal von vorne</g:link>--}%
         <a id="clear-program" href="clear">Nochmal von vorne</a>
@@ -25,9 +26,7 @@
 <header><h1>Lerne zu programmieren</h1></header>
 
 <div id="main">
-    <article id="course">
-        <p>Dies ist ein Text.</p>
-        <p>Dies ist ein Text.</p>
+    <article id="course" style="display: none;">
         <p>Dies ist ein Text.</p>
         <p>Dies ist ein Text.</p>
         <p>Dies ist ein Text.</p>

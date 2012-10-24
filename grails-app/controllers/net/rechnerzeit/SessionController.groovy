@@ -7,6 +7,7 @@ class SessionController {
         log.debug("show session: $params.id")
 
         def userSession = userSessionService.get(params.id)
+//        log.debug("show session: $userSession")
         renderAnswer(userSession)
     }
 
@@ -27,6 +28,8 @@ class SessionController {
             id = userSession.id
             program = userSession.program
             continuousExecution = userSession.continuousExecution
+            showingCourse = userSession.showingCourse
+            lastChangeDate = userSession.lastChangeDate
         }
     }
 
@@ -34,6 +37,7 @@ class SessionController {
         log.debug("update session: $params.id")
 
         def userSession = params2userSession(params)
+//        log.debug("update session: $userSession")
         userSession = userSessionService.update(userSession)
         renderAnswer(userSession)
     }
@@ -55,7 +59,7 @@ class SessionController {
     }
 
     private params2userSession(params) {
-        params.subMap(['id', 'lastChangeDate', 'program', 'continuousExecution'])
+        params.subMap(['id', 'lastChangeDate', 'program', 'continuousExecution', 'showingCourse'])
     }
 
 }

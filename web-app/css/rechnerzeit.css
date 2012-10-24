@@ -47,20 +47,27 @@ nav a {
 #main {
     position: relative;
     min-width: 960px;
-    background-color: white;
+    /*background-color: white;*/
 }
 
 #course {
     position: absolute;
     background-color: white;
     width: 290px;
-    margin: 0 5px;
-    border: 2px solid grey;
+    height: 560px;
+    margin-top: 0;
+    margin-right: 5px;
+    margin-left: 0;
+    margin-bottom: 0;
+    border: none;
+    overflow-x: hidden;
+    overflow-y: auto;
+    border-right: 5px double #a0a0a0;
 }
 
 #playground {
-    position: absolute;
-    left: 300px;
+    /*position: absolute;*/
+    margin-left: 300px;
     right: 0px;
     background-color: rgb(245, 245, 255);
 }
@@ -72,6 +79,10 @@ nav a {
     font-size: 12pt;
     border: 1px solid #a0a0a0;
     background-color: white;
+}
+
+#editor * {
+    resize: none;
 }
 
 #plainEditor {
@@ -97,6 +108,7 @@ nav a {
     padding: 0.2em;
     width: 99%;
     height: 200px;
+    min-height: 200px;
     font-size: 12pt;
     border: 1px solid #a0a0a0;
     background-color: #d3d3d3;
