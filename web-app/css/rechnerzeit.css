@@ -66,8 +66,9 @@ nav a {
 }
 
 #playground {
-    /*position: absolute;*/
-    margin-left: 300px;
+    /* When course is visible: */
+    /*margin-left: 300px;*/
+    margin-left: 0px;
     right: 0px;
     background-color: rgb(245, 245, 255);
 }

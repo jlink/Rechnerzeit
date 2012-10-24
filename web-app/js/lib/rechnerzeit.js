@@ -180,8 +180,12 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             },
             show: function() {
                 this.$el.show();
+                this.$el.css('left: -300px');
+                $('#playground').animate({'margin-left':'300px'}, {queue: false});
+//                this.$el.animate({'left':'0px'}, {queue: false})
             },
             hide: function() {
+                $('#playground').animate({'margin-left':'0px'});
                 this.$el.hide();
             }
         })
