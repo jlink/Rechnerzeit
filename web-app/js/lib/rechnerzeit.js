@@ -6,6 +6,8 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
         var menuView;
         var playgroundView;
         var router;
+        var pendingSave;
+        var programChanged = false;
 
         function getStoredSessionId() {
             return localStorage.getItem('sessionId')
@@ -179,14 +181,13 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                 }
             },
             show: function() {
-                this.$el.show();
-                this.$el.css('left: -300px');
+                this.$el.css({display: 'block', left: '-300px'});
                 $('#playground').animate({'margin-left':'300px'}, {queue: false});
-//                this.$el.animate({'left':'0px'}, {queue: false})
+                this.$el.animate({left: '0px'}, {queue: false});
             },
             hide: function() {
                 $('#playground').animate({'margin-left':'0px'});
-                this.$el.hide();
+                this.$el.animate({left: '-300px'}, {queue: false}, function() {this.$el.hide()});
             }
         })
 
@@ -199,10 +200,9 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             initialize: function(){
                 _.bindAll(this, 'initCodeRunner', 'onRunnerOutputChange', 'onRunnerResultChange', 'onRunnerExceptionChange', 'onRunnerRunningChange',
                     'initEditor', 'onEditorChange', 'gotoEditorEnd',
-                    'onProgramChange', 'continuousExecute', 'initUserSession',
+                    'onProgramChange', 'continuousExecute', 'initUserSession', 'onContinuousExecutionChange',
                     'toggleContinuousExecution', 'initAceEditor', 'initPlainEditor', 'evaluateProgram',
                     'shiftRight', 'shiftLeft');
-                this.firstRun = true;
                 this.initEditor();
                 this.initCodeRunner();
                 this.initUserSession();
@@ -305,13 +305,14 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                 }
             },
             toggleContinuousExecution: function() {
+//                if (this.$('#continuous-execution').attr('checked')) {
+//                    currentSession.set({'continuousExecution': true});
+//                } else {
+//                    currentSession.set({'continuousExecution': false});
+//                }
                 currentSession.toggleContinuousExecution();
             },
             continuousExecute: function() {
-                if (this.firstRun) {
-                    this.firstRun = false;
-                    return;
-                }
                 if (currentSession.get('continuousExecution')) {
                     this.evaluateProgram();
                 }
@@ -350,8 +351,8 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
         }
 
         function onSessionChange() {
-            clearTimeout(this.pendingSave);
-            this.pendingSave = setTimeout(continuousSessionSave, 5000);
+            clearTimeout(pendingSave);
+            pendingSave = setTimeout(continuousSessionSave, 1000);
         }
 
         function continuousSessionSave() {
@@ -367,11 +368,17 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             });
         }
 
+        function enableSaving() {
+            currentSession.off('change', enableSaving);
+            currentSession.on('change:program change:continuousExecution change:showingCourse', onSessionChange);
+            onSessionChange();
+        }
+
         rechnerzeit.start = function() {
             router = new Router();
             codeRunner = new CodeRunner();
             initializeUserSession(function() {
-                currentSession.on('change:program change:continuousExecution change:showingCourse', onSessionChange);
+                currentSession.on('change:program', enableSaving);
                 menuView = new MenuView();
                 courseView = new CourseView();
                 playgroundView = new PlaygroundView();
