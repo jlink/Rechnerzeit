@@ -63,6 +63,12 @@ nav a {
     overflow-x: hidden;
     overflow-y: auto;
     border-right: 5px double #a0a0a0;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: #7a7a7a;
+}
+
+#course div {
+    padding: 1em;
 }
 
 #playground {

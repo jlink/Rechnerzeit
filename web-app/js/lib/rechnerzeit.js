@@ -88,7 +88,7 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             },
             run: function(code) {
                 this.set('output', '');
-                this.set('result', null);
+                this.set('result', undefined);
                 this.set('exception', null);
                 this.set('running', true);
                 try {
@@ -181,13 +181,14 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                 }
             },
             show: function() {
-                this.$el.css({display: 'block', left: '-300px'});
+                this.$el.css({display: 'block', left: '-310px'});
                 $('#playground').animate({'margin-left':'300px'}, {queue: false});
                 this.$el.animate({left: '0px'}, {queue: false});
             },
             hide: function() {
+                var el = this.el;
                 $('#playground').animate({'margin-left':'0px'});
-                this.$el.animate({left: '-300px'}, {queue: false}, function() {this.$el.hide()});
+                this.$el.animate({left: '-310px'}, function() {$(el).hide()});
             }
         })
 
@@ -201,8 +202,7 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                 _.bindAll(this, 'initCodeRunner', 'onRunnerOutputChange', 'onRunnerResultChange', 'onRunnerExceptionChange', 'onRunnerRunningChange',
                     'initEditor', 'onEditorChange', 'gotoEditorEnd',
                     'onProgramChange', 'continuousExecute', 'initUserSession', 'onContinuousExecutionChange',
-                    'toggleContinuousExecution', 'initAceEditor', 'initPlainEditor', 'evaluateProgram',
-                    'shiftRight', 'shiftLeft');
+                    'toggleContinuousExecution', 'initAceEditor', 'initPlainEditor', 'evaluateProgram');
                 this.initEditor();
                 this.initCodeRunner();
                 this.initUserSession();
@@ -231,8 +231,9 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             },
             onRunnerRunningChange: function() {
                 if (codeRunner.get('running')) {
-                    $('#output').addClass("running");
-                    $('#output').css({'background-color': '#fff7ae'});
+                    this.$('#output').val('');
+                    this.$('#output').addClass("running");
+                    this.$('#output').css({'background-color': '#fff7ae'});
                 } else {
                     setTimeout(function() {
                         $('#output').animate({'background-color': '#d3d3d3'}, {complete:
@@ -244,7 +245,7 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                 }
             },
             onRunnerOutputChange: function() {
-                $('#output').val(codeRunner.get('output'));
+                this.$('#output').val(codeRunner.get('output'));
             },
             onRunnerResultChange: function() {
                 var result = codeRunner.get('result');
@@ -314,12 +315,6 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             },
             evaluateProgram: function() {
                 codeRunner.run(currentSession.runProgram);
-            },
-            shiftLeft: function() {
-                this.$el.css('background-color: red');
-            },
-            shiftRight: function() {
-                this.$el.css('background-color: blue');
             }
 
         });

@@ -27,10 +27,22 @@
 
 <div id="main">
     <article id="course" style="display: none;">
-        <p>Dies ist ein Text.</p>
-        <p>Dies ist ein Text.</p>
-        <p>Dies ist ein Text.</p>
-        <p>Dies ist ein Text.</p>
+        <div>Auf der rechten Seite siehst du zwei Bereiche:</div>
+        <ul>
+            <li>Der obere Bereich ist ein so genannter Editor, in den du deine Programme eingeben kannst.</li>
+            <li>
+                Im unteren Bereich siehst du, was dein Programm bewirkt; das können Ausgaben sein, oder auch ein
+                Rückgabewert, falls dein Programm am Ende ein Ergebnis zurückliefert,
+            </li>
+        </ul>
+        <div>
+            Wenn du auf [Programm&nbspausführen] klickst, dann wird es Zeile für Zeile ausgeführt.
+            Das geht jedoch so schnell, dass das Ergebnis der Ausführung sofort erscheint.
+        </div>
+        <div>
+            Wenn du etwas im Programm veränderst, dann wird es sofort ausgeführt - es sein denn, du hast vorher
+            den Haken bei [Ständige&nbspProgrammausführung] entfernt.
+        </div>
     </article>
     <article id="playground">
         <section class="output-box">
