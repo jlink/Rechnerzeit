@@ -269,16 +269,16 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                 this.editor.setTheme("ace/theme/eclipse");
                 this.editor.session.setMode("ace/mode/javascript");
                 this.editor.setShowPrintMargin(false);
-                this.editor.session.on('change', this.onEditorChange);
                 this.editor.commands.addCommand({
                     name: 'ausfuehren',
                     bindKey: {win: 'Ctrl-Y',  mac: 'Command-Y'},
                     exec: this.evaluateProgram
                 });
+                this.editor.setValue(currentSession.get('program'));
+                this.editor.session.on('change', this.onEditorChange);
             },
 
             initUserSession:function () {
-                this.editor.setValue(currentSession.get('program'));
                 currentSession.on('change:program', this.onProgramChange);
                 $('#continuous-execution').attr('checked', currentSession.get('continuousExecution'));
                 currentSession.on('change:continuousExecution', this.onContinuousExecutionChange);
@@ -296,7 +296,6 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                 this.pendingChange = setTimeout(this.continuousExecute, 1000)
             },
             onContinuousExecutionChange: function() {
-                alert(currentSession.get('continuousExecution'))
                 if (currentSession.get('continuousExecution')) {
                     this.evaluateProgram();
                 }
