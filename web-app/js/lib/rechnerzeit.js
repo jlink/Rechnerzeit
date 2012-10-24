@@ -305,11 +305,6 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                 }
             },
             toggleContinuousExecution: function() {
-//                if (this.$('#continuous-execution').attr('checked')) {
-//                    currentSession.set({'continuousExecution': true});
-//                } else {
-//                    currentSession.set({'continuousExecution': false});
-//                }
                 currentSession.toggleContinuousExecution();
             },
             continuousExecute: function() {
