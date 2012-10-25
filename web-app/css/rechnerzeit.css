@@ -36,12 +36,24 @@ a:hover {
 nav#menu {
     padding: 0.5em 1em;
     border-bottom: 1px solid #a0a0a0;
+    min-width: 400px;
 }
 
 nav a {
     margin-right: 1em;
     color: #6495ed;
     text-decoration: none;
+}
+
+#connect-icon {
+    padding-top: 3px;
+    padding-right: 3px;
+    padding-left: 3px;
+    padding-bottom: 0px;
+    margin-bottom: 2px;
+    border: 1px solid #d3d3d3;
+    float: right;
+    background-color: red;
 }
 
 #main {

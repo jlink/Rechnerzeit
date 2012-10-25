@@ -21,6 +21,7 @@
         <a id="clear-program" href="clear">Nochmal von vorne</a>
         <a id="send-program" href="mailto:?subject=Rechnerzeit: Mein Programm">Programm verschicken</a>
     </span>
+    <span id="connect-icon"><g:img dir="images/silk-icons" file="database_refresh.png"/></span>
 </nav>
 
 <header><h1>Lerne zu programmieren</h1></header>
