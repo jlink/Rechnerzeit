@@ -101,6 +101,12 @@ nav a {
     background-color: rgb(245, 245, 255);
 }
 
+.highlighted {
+    -moz-box-shadow:    0 0 15px orange;
+    -webkit-box-shadow: 0 0 15px orange;
+    box-shadow:         0 0 5px 5px orange;
+}
+
 #editor {
     position: relative;
     width: 100%;

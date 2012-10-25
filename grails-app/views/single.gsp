@@ -30,22 +30,23 @@
     <article id="course" style="display: none;">
         <div>Auf der rechten Seite siehst du zwei Bereiche:</div>
         <ul>
-            <li>Der obere Bereich ist ein so genannter Editor, in den du deine Programme eingeben kannst.</li>
+            <li>Der <a class="highlight-editor">obere Bereich</a> ist ein so genannter Editor, in den du deine Programme eingeben kannst.</li>
             <li>
-                Im unteren Bereich siehst du, was dein Programm bewirkt; das können Ausgaben sein, oder auch ein
+                Im <a class="highlight-console">unteren Bereich</a>  siehst du, was dein Programm bewirkt; das können Ausgaben sein, oder auch ein
                 Rückgabewert, falls dein Programm am Ende ein Ergebnis zurückliefert,
             </li>
         </ul>
         <div>
-            Wenn du auf [Programm&nbspausführen] klickst, dann wird es Zeile für Zeile ausgeführt.
+            Wenn du auf <a class="highlight-executeButton">[Programm&nbspausführen]</a> klickst, dann wird es Zeile für Zeile ausgeführt.
             Das geht jedoch so schnell, dass das Ergebnis der Ausführung sofort erscheint.
         </div>
         <div>
             Wenn du etwas im Programm veränderst, dann wird es sofort ausgeführt - es sein denn, du hast vorher
-            den Haken bei [Ständige&nbspProgrammausführung] entfernt.
+            den Haken bei <a class="highlight-executeCheckbox">[Ständige&nbspProgrammausführung]</a> entfernt.
         </div>
     </article>
     <article id="playground">
+
         <section class="output-box">
             <div id="editor"></div>
         </section>
