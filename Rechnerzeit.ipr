@@ -196,6 +196,7 @@
     <dictionary name="link">
       <words>
         <w>goto</w>
+        <w>mouseout</w>
         <w>mouseover</w>
         <w>rechnerzeit</w>
       </words>

@@ -189,18 +189,13 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
         var CourseView = Backbone.View.extend({
             el:$('#course'),
             events:{
-                'click a.highlight-editor':'highlightEditor',
-                'mouseover a.highlight-editor':'highlightEditor',
-                'click a.highlight-console':'highlightConsole',
-                'mouseover a.highlight-console':'highlightConsole',
-                'click a.highlight-executeButton':'highlightExecuteButton',
-                'mouseover a.highlight-executeButton':'highlightExecuteButton',
-                'click a.highlight-executeCheckbox':'highlightExecuteCheckbox',
-                'mouseover a.highlight-executeCheckbox':'highlightExecuteCheckbox'
+                'mouseover a.highlight':'startHighlight',
+                'mouseout a.highlight':'stopHighlight',
+                'click a.highlight':'highlight'
             },
             initialize:function () {
                 _.bindAll(this, 'onShowingCourseChange', 'show', 'hide',
-                    'highlight', 'highlightEditor', 'highlightConsole', 'highlightExecuteButton', 'highlightExecuteCheckbox');
+                    'startHighlight', 'stopHighlight', 'highlight');
                 this.onShowingCourseChange();
                 currentSession.on('change:showingCourse', this.onShowingCourseChange);
             },
@@ -223,24 +218,29 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                     $(el).hide()
                 });
             },
-            highlightEditor:function () {
-                this.highlight('#editor');
+            withHighlightTarget: function(evt, func) {
+                var targetId = $(evt.target).attr('highlight-id');
+                var targetElement = $(targetId);
+                if (targetElement)
+                    func(targetElement)
             },
-            highlightConsole:function () {
-                this.highlight('#output');
+            startHighlight: function(evt) {
+                this.withHighlightTarget(evt, function(elem) {
+                    elem.addClass('highlighted');
+                });
             },
-            highlightExecuteButton:function () {
-                this.highlight('#single-execution');
+            stopHighlight: function(evt) {
+                this.withHighlightTarget(evt, function(elem) {
+                    elem.removeClass('highlighted');
+                });
             },
-            highlightExecuteCheckbox:function () {
-                this.highlight('#continuous-execution');
-            },
-            highlight:function (selector) {
-                var highlightedElement = $(selector);
-                highlightedElement.addClass('highlighted');
-                setTimeout(function () {
-                    highlightedElement.removeClass('highlighted');
-                }, 2000);
+            highlight:function (evt) {
+                this.withHighlightTarget(evt, function(elem) {
+                    elem.addClass('highlighted');
+                    setTimeout(function () {
+                        elem.removeClass('highlighted');
+                    }, 2000);
+                });
             }
         });
 
