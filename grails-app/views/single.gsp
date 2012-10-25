@@ -1,6 +1,6 @@
 <%@ page contentType="text/html;charset=UTF-8" %>
 <!DOCTYPE html>
-<html>
+<html xmlns="http://www.w3.org/1999/html">
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
@@ -37,12 +37,12 @@
             </li>
         </ul>
         <div>
-            Wenn du auf <a class="highlight" highlight-id="#execute-button">[Programm&nbspausführen]</a> klickst, dann wird es Zeile für Zeile ausgeführt.
+            Wenn du auf <a class="highlight button" highlight-id="#execute-button">Programm&nbsp;ausführen</a> klickst, dann wird es Zeile für Zeile ausgeführt.
             Das geht jedoch so schnell, dass das Ergebnis der Ausführung sofort erscheint.
         </div>
         <div>
             Wenn du etwas im Programm veränderst, dann wird es sofort ausgeführt - es sein denn, du hast vorher
-            den Haken bei <a class="highlight" highlight-id="#execute-checkbox">[Ständige&nbspProgrammausführung]</a> entfernt.
+            den Haken bei <a class="highlight button" highlight-id="#execute-checkbox">Ständige&nbsp;Programmausführung</a> entfernt.
         </div>
     </article>
     <article id="playground">

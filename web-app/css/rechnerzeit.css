@@ -33,6 +33,20 @@ a:hover {
     background-color: #6495ed;
 }
 
+a.button {
+    border: 1px solid #a9a9a9;
+    margin: 0 2px;
+    background-color: #d3d3d3;
+    word-spacing: normal;
+    line-height: 1.5em;
+}
+
+a.button:hover {
+    color: white;
+    background-color: #6495ed;
+    border: none;
+}
+
 nav#menu {
     padding: 0.5em 1em;
     border-bottom: 1px solid #a0a0a0;
@@ -104,7 +118,7 @@ nav a {
 .highlighted {
     -moz-box-shadow:    0 0 15px orange;
     -webkit-box-shadow: 0 0 15px orange;
-    box-shadow:         0 0 5px 5px orange;
+    box-shadow:         0 0 15px orange;
 }
 
 #editor {
