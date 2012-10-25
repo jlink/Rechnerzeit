@@ -3,12 +3,7 @@ define(['jquery'], function ($) {
         var runner
 
         function drucke(text) {
-            runner.print(text);
-        }
-
-        function druckeInZeile(text) {
-            text = text || '';
-            drucke(text + '\n');
+            runner.print(text + '\n');
         }
 
         function heute() {

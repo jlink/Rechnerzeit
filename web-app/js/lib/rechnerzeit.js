@@ -111,10 +111,11 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                 program:  "// Ein kleines Programm\n" +
                     "var name = 'Jannek';\n" +
                     "var geboren = 2001;\n" +
+                    "drucke('Hallo, ' + name + '!');\n" +
+                    "drucke('Heute ist der ' + heute() + '.');\n" +
                     "var alter = heute().jahr - geboren;\n" +
-                    "drucke('Hallo, ' + name + '. ');\n" +
-                    "druckeInZeile('Heute ist der ' + heute() + '. Es ist jetzt ' + jetzt());\n" +
-                    "druckeInZeile('Du bist ' + alter + ' Jahre alt.');\n"
+                    "drucke('Du bist ' + alter + ' Jahre alt.');\n" +
+                    "alter * 2 // dein doppeltes Alter\n"
             },
             initialize: function() {
                 _.bindAll(this, 'runProgram', 'toggleContinuousExecution');
@@ -140,6 +141,25 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                 _.bindAll(this, 'onShowingCourseChange', 'clickShowCourse', 'clickHideCourse', 'makeHideCourseVisible', 'makeShowCourseVisible');
                 this.onShowingCourseChange();
                 currentSession.on("change:showingCourse", this.onShowingCourseChange);
+                $('#connect-icon').ajaxStart(function() {
+                    $(this).removeClass('ok')
+                    $(this).removeClass('failed')
+                    $(this).addClass('running')
+                })
+                $('#connect-icon').ajaxSuccess(function() {
+                    var $this = $(this);
+                    setTimeout(function() {
+                        $this.removeClass('running');
+                        $this.addClass('ok');
+                    }, 500);
+                })
+                $('#connect-icon').ajaxError(function() {
+                    var $this = $(this);
+                    setTimeout(function() {
+                        $(this).removeClass('running');
+                        $(this).addClass('failed');
+                    });
+                })
             },
             onShowingCourseChange: function() {
                 if (currentSession.get('showingCourse')) {

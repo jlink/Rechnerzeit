@@ -36,7 +36,7 @@ a:hover {
 nav#menu {
     padding: 0.5em 1em;
     border-bottom: 1px solid #a0a0a0;
-    min-width: 400px;
+    min-width: 640px;
 }
 
 nav a {
@@ -51,9 +51,19 @@ nav a {
     padding-left: 3px;
     padding-bottom: 0px;
     margin-bottom: 2px;
-    border: 1px solid #d3d3d3;
     float: right;
-    background-color: red;
+}
+
+#connect-icon.running {
+    background-color: #add8e6;
+}
+
+#connect-icon.ok {
+    background-color: #90ee90;
+}
+
+#connect-icon.failed {
+    background-color: #ffa07a;
 }
 
 #main {
