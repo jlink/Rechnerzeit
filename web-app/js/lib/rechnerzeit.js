@@ -244,6 +244,58 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             }
         });
 
+        var AceEditor = Backbone.View.extend({
+            el:$('#editor'),
+            initialize:function () {
+                _.bindAll(this, 'setValue', 'getValue', 'gotoEnd', 'setChangeCallback');
+                this.editor = ace.edit("editor");
+                this.editor.setTheme("ace/theme/eclipse");
+                this.editor.session.setMode("ace/mode/javascript");
+                this.editor.setShowPrintMargin(false);
+                this.editor.commands.addCommand({
+                    name:'ausfuehren',
+                    bindKey:{win:'Ctrl-Y', mac:'Command-Y'},
+                    exec:this.evaluateProgram
+                });
+            },
+            setValue: function(text) {
+                this.editor.setValue(text);
+            },
+            getValue: function() {
+                return this.editor.getValue();
+            },
+            gotoEnd: function() {
+                this.editor.gotoLine(this.editor.session.getLength());
+                this.$('textarea').focus();
+            },
+            setChangeCallback: function(callback) {
+                this.editor.session.on('change', callback);
+            }
+        });
+
+        var PlainEditor = Backbone.View.extend({
+            el:$('#editor'),
+            initialize:function () {
+                _.bindAll(this, 'setValue', 'getValue', 'gotoEnd', 'setChangeCallback');
+                this.editorArea = $("<textarea id='plainEditor'/>");
+                this.changeCallback = function() {};
+                this.$el.append(this.editorArea);
+            },
+            setValue: function(text) {
+                this.editorArea.val(text);
+                this.changeCallback();
+            },
+            getValue: function() {
+                return this.editorArea.val();
+            },
+            gotoEnd: function() {
+            },
+            setChangeCallback: function(callback) {
+                this.changeCallback = callback
+                this.editorArea.keyup(this.changeCallback);
+            }
+        });
+
         var PlaygroundView = Backbone.View.extend({
             el:$('#playground'),
             events:{
@@ -252,19 +304,21 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             },
             initialize:function () {
                 _.bindAll(this, 'initCodeRunner', 'onRunnerOutputChange', 'onRunnerResultChange', 'onRunnerExceptionChange', 'onRunnerRunningChange',
-                    'initEditor', 'onEditorChange', 'gotoEditorEnd',
+                    'initEditor', 'onEditorChange',
                     'onProgramChange', 'continuousExecute', 'initUserSession', 'onContinuousExecutionChange',
-                    'toggleContinuousExecution', 'initAceEditor', 'initPlainEditor', 'evaluateProgram');
+                    'toggleContinuousExecution', 'evaluateProgram');
                 this.initEditor();
                 this.initCodeRunner();
                 this.initUserSession();
             },
             initEditor:function () {
                 if (isMobile.any())
-                    this.initPlainEditor();
+                    this.editor = new PlainEditor();
                 else
-                    this.initAceEditor();
+                    this.editor = new AceEditor();
+                this.editor.setChangeCallback(this.onEditorChange);
                 this.editor.setValue(currentSession.get('program'));
+                this.editor.gotoEnd();
             },
             initCodeRunner:function () {
                 codeRunner.on('change:output', this.onRunnerOutputChange);
@@ -306,51 +360,13 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                 var old = $('#output').val();
                 $('#output').val(old + '\n==> ' + dumpObject(result));
             },
-            initPlainEditor:function () {
-                var editorArea = $("<textarea id='plainEditor'/>");
-                var changeCallback = this.onEditorChange;
-                $('#editor').append(editorArea);
-                this.editor = {
-                    gotoLine:function () {
-                    },
-                    getValue:function () {
-                        return editorArea.val();
-                    },
-                    setValue:function (text) {
-                        editorArea.val(text);
-                        changeCallback();
-                    },
-                    session:{getLength:function () {
-                        return 0;
-                    }}
-                }
-                editorArea.keyup(changeCallback);
-            },
-            initAceEditor:function () {
-                this.editor = ace.edit("editor");
-                this.editor.setTheme("ace/theme/eclipse");
-                this.editor.session.setMode("ace/mode/javascript");
-                this.editor.setShowPrintMargin(false);
-                this.editor.commands.addCommand({
-                    name:'ausfuehren',
-                    bindKey:{win:'Ctrl-Y', mac:'Command-Y'},
-                    exec:this.evaluateProgram
-                });
-                this.editor.session.on('change', this.onEditorChange);
-            },
-
             initUserSession:function () {
                 currentSession.on('change:program', this.onProgramChange);
                 $('#continuous-execution').attr('checked', currentSession.get('continuousExecution'));
                 currentSession.on('change:continuousExecution', this.onContinuousExecutionChange);
-                this.gotoEditorEnd();
-                $('#editor textarea').focus();
             },
             onEditorChange:function () {
                 currentSession.set('program', this.editor.getValue());
-            },
-            gotoEditorEnd:function () {
-                this.editor.gotoLine(this.editor.session.getLength());
             },
             onProgramChange:function () {
                 clearTimeout(this.pendingChange);
