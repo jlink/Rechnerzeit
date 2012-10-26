@@ -264,6 +264,7 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                     this.initPlainEditor();
                 else
                     this.initAceEditor();
+                this.editor.setValue(currentSession.get('program'));
             },
             initCodeRunner:function () {
                 codeRunner.on('change:output', this.onRunnerOutputChange);
@@ -335,7 +336,6 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                     bindKey:{win:'Ctrl-Y', mac:'Command-Y'},
                     exec:this.evaluateProgram
                 });
-                this.editor.setValue(currentSession.get('program'));
                 this.editor.session.on('change', this.onEditorChange);
             },
 
