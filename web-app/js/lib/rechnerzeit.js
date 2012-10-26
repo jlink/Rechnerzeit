@@ -32,16 +32,6 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             return JSON.stringify(obj)
         }
 
-        function showSessionMenu() {
-            var mailto = $('#send-program').attr('href') + '&body=' + window.location.href
-            $('#send-program').attr('href', mailto);
-            $('#session-nav').fadeIn();
-        }
-
-        function hideSessionMenu() {
-            $('#session-nav').fadeOut();
-        }
-
         var Router = Backbone.Router.extend({
 
             initialize:function () {
