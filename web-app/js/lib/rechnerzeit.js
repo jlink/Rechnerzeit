@@ -32,6 +32,16 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             return JSON.stringify(obj)
         }
 
+        function showSessionMenu() {
+            var mailto = $('#send-program').attr('href') + '&body=' + window.location.href
+            $('#send-program').attr('href', mailto);
+            $('#session-nav').fadeIn();
+        }
+
+        function hideSessionMenu() {
+            $('#session-nav').fadeOut();
+        }
+
         var Router = Backbone.Router.extend({
 
             initialize:function () {
@@ -81,14 +91,16 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                 this.set('result', undefined);
                 this.set('exception', null);
                 this.set('running', true);
-                try {
-                    var result = code(this);
-                    this.set('result', result);
-                } catch (ex) {
-                    this.set('exception', ex);
-                } finally {
-                    this.set('running', false);
-                }
+                setTimeout(_.bind(function() {
+                    try {
+                        var result = code(this);
+                        this.set('result', result);
+                    } catch (ex) {
+                        this.set('exception', ex);
+                    } finally {
+                        this.set('running', false);
+                    }
+                }, this), 1);
             }
         });
 
@@ -237,16 +249,11 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
         var AceEditor = Backbone.View.extend({
             el:$('#editor'),
             initialize:function () {
-                _.bindAll(this, 'setValue', 'getValue', 'gotoEnd', 'setChangeCallback');
+                _.bindAll(this, 'setValue', 'getValue', 'gotoEnd', 'setChangeCallback', 'addCommand');
                 this.editor = ace.edit("editor");
                 this.editor.setTheme("ace/theme/eclipse");
                 this.editor.session.setMode("ace/mode/javascript");
                 this.editor.setShowPrintMargin(false);
-                this.editor.commands.addCommand({
-                    name:'ausfuehren',
-                    bindKey:{win:'Ctrl-Y', mac:'Command-Y'},
-                    exec:this.evaluateProgram
-                });
             },
             setValue: function(text) {
                 this.editor.setValue(text);
@@ -260,6 +267,9 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             },
             setChangeCallback: function(callback) {
                 this.editor.session.on('change', callback);
+            },
+            addCommand: function(command) {
+                this.editor.commands.addCommand(command);
             }
         });
 
@@ -283,6 +293,9 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             setChangeCallback: function(callback) {
                 this.changeCallback = callback
                 this.editorArea.keyup(this.changeCallback);
+            },
+            addCommand: function(command) {
+                this.editor.commands.addCommand(command);
             }
         });
 
@@ -309,6 +322,12 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                 this.editor.setChangeCallback(this.onEditorChange);
                 this.editor.setValue(currentSession.get('program'));
                 this.editor.gotoEnd();
+                this.editor.addCommand({
+                    name:'ausfuehren',
+                    bindKey:{win:'Ctrl-Y', mac:'Command-Y'},
+                    exec:this.evaluateProgram
+                });
+
             },
             initCodeRunner:function () {
                 codeRunner.on('change:output', this.onRunnerOutputChange);
