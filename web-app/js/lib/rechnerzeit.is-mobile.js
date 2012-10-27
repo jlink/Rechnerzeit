@@ -1,5 +1,7 @@
 define(['jquery'], function($) {
 
+        var testModeKey = 'mobile-test-mode';
+
         var isMobile = {
             Android: function() {
                 return navigator.userAgent.match(/Android/i);
@@ -16,8 +18,17 @@ define(['jquery'], function($) {
             Windows: function() {
                 return navigator.userAgent.match(/IEMobile/i);
             },
+            TestMode: function() {
+                return localStorage.getItem(testModeKey) === 'on';
+            },
+            setTestMode: function() {
+                localStorage.setItem(testModeKey, 'on');
+            },
+            clearTestMode: function() {
+                localStorage.removeItem(testModeKey);
+            },
             any: function() {
-                return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows());
+                return (isMobile.Android() || isMobile.BlackBerry() || isMobile.iOS() || isMobile.Opera() || isMobile.Windows() || isMobile.TestMode());
             }
         };
 

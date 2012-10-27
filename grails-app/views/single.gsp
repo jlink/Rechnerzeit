@@ -4,7 +4,7 @@
 <head>
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
-    <title>Rechnerzeit</title>
+    <title>Rechnerzeit: Lerne zu programmieren</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="shortcut icon" href="${resource(dir: 'images', file: 'favicon.ico')}" type="image/x-icon">
     <script src="http://d1n0x3qji82z53.cloudfront.net/src-min-noconflict/ace.js" type="text/javascript" charset="utf-8"></script>
@@ -17,9 +17,8 @@
     <a id="show-course">Programmierkurs&nbsp;&gt;&gt;</a>
     <a id="hide-course" style="display: none;">&lt;&lt;&nbsp;Programmierkurs</a>
     <span id="session-nav" style="display: none">
-        %{--<g:link uri="clear">Nochmal von vorne</g:link>--}%
-        <a id="clear-program" href="clear">Nochmal von vorne</a>
-        <a id="send-program" href="mailto:?subject=Rechnerzeit: Mein Programm">Programm verschicken</a>
+        <a id="clear-program" href="clear">Neu Anfangen</a>
+        %{--<a id="send-program" href="mailto:?subject=Rechnerzeit: Mein Programm">Programm verschicken</a>--}%
     </span>
     <span id="connect-icon"><g:img dir="images/silk-icons" file="database_refresh.png"/></span>
 </nav>

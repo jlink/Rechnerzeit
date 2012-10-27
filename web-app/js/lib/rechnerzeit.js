@@ -51,6 +51,7 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             routes:{
                 'clear':'clearSession',
                 'clear/':'clearSession',
+                'mobile': 'mobileTestMode',
                 '*sessionId':'home',
                 '':'home'
             },
@@ -68,7 +69,13 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
             clearSession:function () {
                 clearStoredSessionId();
                 hideSessionMenu();
+                isMobile.clearTestMode();
                 this.navigate('/', {replace:true});
+            },
+
+            mobileTestMode: function() {
+                isMobile.setTestMode();
+                this.navigate('/', {replace: true});
             }
         });
 
@@ -318,8 +325,8 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                     this.editor = new PlainEditor();
                 else
                     this.editor = new AceEditor();
-                this.editor.setChangeCallback(this.onEditorChange);
                 this.editor.setValue(currentSession.get('program'));
+                this.editor.setChangeCallback(this.onEditorChange);
                 this.editor.gotoEnd();
                 this.editor.addCommand({
                     name:'ausfuehren',
