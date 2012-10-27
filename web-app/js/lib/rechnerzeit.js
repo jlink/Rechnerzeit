@@ -276,7 +276,7 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
         var PlainEditor = Backbone.View.extend({
             el:$('#editor'),
             initialize:function () {
-                _.bindAll(this, 'setValue', 'getValue', 'gotoEnd', 'setChangeCallback');
+                _.bindAll(this, 'setValue', 'getValue', 'gotoEnd', 'setChangeCallback', 'addCommand');
                 this.editorArea = $("<textarea id='plainEditor'/>");
                 this.changeCallback = function() {};
                 this.$el.append(this.editorArea);
@@ -295,7 +295,6 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                 this.editorArea.keyup(this.changeCallback);
             },
             addCommand: function(command) {
-                this.editor.commands.addCommand(command);
             }
         });
 
