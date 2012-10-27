@@ -1,4 +1,4 @@
-define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery', 'jquery.animate-colors-min', 'jquery.ba-resize.min'], function (playground, isMobile, Backbone, $) {
+define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery', 'jquery.animate-colors-min'], function (playground, isMobile, Backbone, $) {
         var rechnerzeit = { };
         var currentSession;
         var codeRunner;
