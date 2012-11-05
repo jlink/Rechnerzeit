@@ -9,6 +9,10 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
         var pendingSave;
         var programChanged = false;
 
+        function aceNotInstalled() {
+            return (window.ace === undefined)
+        }
+
         function getStoredSessionId() {
             return localStorage.getItem('sessionId')
         }
@@ -321,7 +325,7 @@ define(['rechnerzeit.playground', 'rechnerzeit.is-mobile', 'backbone', 'jquery',
                 this.initUserSession();
             },
             initEditor:function () {
-                if (isMobile.any())
+                if (isMobile.any() || aceNotInstalled())
                     this.editor = new PlainEditor();
                 else
                     this.editor = new AceEditor();

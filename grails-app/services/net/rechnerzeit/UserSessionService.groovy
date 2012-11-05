@@ -8,23 +8,25 @@ class UserSessionService {
     static String idAlphabet = (('0'..'9')).join()
 
     def random = new Random()
+    def couchDbService
 
     def get(id) {
-        sessions[id]
+        couchDbService.getSession(id)
     }
 
     def save(userSession) {
         String id = generateId()
         userSession.id = id
-        sessions[id] = userSession
+        couchDbService.saveSession(userSession)
     }
 
     def update(userSession) {
-        sessions[userSession.id] = userSession
+//        sessions[userSession.id] = userSession
+        couchDbService.updateSession(userSession)
     }
 
     def delete(id) {
-        sessions.remove(id)
+//        sessions.remove(id)
     }
 
     private generateId() {

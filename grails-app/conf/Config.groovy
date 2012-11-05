@@ -98,3 +98,17 @@ log4j = {
            'org.hibernate',
            'net.sf.ehcache.hibernate'
 }
+
+//Rechnerzeit configuration
+rechnerzeit.couchdb.url = 'http://localhost:5984'
+rechnerzeit.couchdb.name = '/rechnerzeit'
+rechnerzeit.couchdb.user = ''
+rechnerzeit.couchdb.pw = ''
+environments {
+    production {
+        rechnerzeit.couchdb.url = 'https://jlink.cloudant.com'
+        rechnerzeit.couchdb.name = '/rechnerzeit'
+        rechnerzeit.couchdb.user = 'pthemirsedgentedinentedg'
+        rechnerzeit.couchdb.pw = 'Xd3LTOoqyn2Fl6BRMpMUO80A'
+    }
+}
